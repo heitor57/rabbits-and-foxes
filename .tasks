@@ -1,0 +1,39 @@
+
+[file-build-run-original]
+command=make debug && ./serial-rabbits-and-foxes ./data/in/example.txt ./data/out/example.txt
+cwd=$(VIM_ROOT)
+output=terminal
+errorformat=%f:%l:%m
+save=1
+[file-build-run-valgrind]
+command=make && valgrind --leak-check=full --show-leak-kinds=all ./serialdf ./data/t1.txt ./data/t1_out.txt
+cwd=$(VIM_ROOT)
+output=quickfix
+errorformat=%f:%l:%m
+save=1
+[file-build-run-test-blocks]
+command=make && ./serial-blocks-divisor-function ./data/entrada.txt ./data/entrada_out.txt && python3 ./test/df.py ./data/entrada.txt ./data/entrada_out.txt
+cwd=$(VIM_ROOT)
+output=quickfix
+errorformat=%f:%l:%m
+save=1
+[file-build]
+command=make
+cwd=$(VIM_ROOT)
+output=quickfix
+errorformat=%f:%l:%m
+save=1
+
+[file-build-run-test-parallel]
+command=make && mpirun  --mca opal_warn_on_missing_libcuda 0 --use-hwthread-cpus -n 3 ./paralleldf ./data/entrada.txt ./data/entrada_out.txt && python3 ./test/df.py ./data/entrada.txt ./data/entrada_out.txt
+cwd=$(VIM_ROOT)
+output=quickfix
+errorformat=%f:%l:%m
+save=1
+
+[file-build-run-parallel]
+command=make && mpirun  --mca opal_warn_on_missing_libcuda 0 --use-hwthread-cpus -n 3 ./paralleldf ./data/entrada.txt ./data/entrada_out.txt
+cwd=$(VIM_ROOT)
+output=quickfix
+errorformat=%f:%l:%m
+save=1
