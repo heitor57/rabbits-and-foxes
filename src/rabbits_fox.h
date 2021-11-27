@@ -17,6 +17,12 @@ typedef struct {
   int previous_line, previous_column;
 } rf_ecosystem_object_t;
 
+struct ecosystem {
+  int GEN_PROC_COELHOS, GEN_PROC_RAPOSAS, GEN_COMIDA_RAPOSAS, N_GEN, L, C, N;
+  int current_generation;
+  rf_ecosystem_object_t **environment;
+};
+
 rf_ecosystem_t *rf_new_ecosystem(int GEN_PROC_COELHOS, int GEN_PROC_RAPOSAS,
                                  int GEN_COMIDA_RAPOSAS, int N_GEN, int L,
                                  int C, int N);

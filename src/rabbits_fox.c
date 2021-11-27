@@ -1,16 +1,11 @@
 #include "rabbits_fox.h"
 #include "errors.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #define DIRECTIONS_NUMBER 4
 #define next_cell(g, x, y, p) (((g) + (x) + (y)) % (p))
-
-struct ecosystem {
-  int GEN_PROC_COELHOS, GEN_PROC_RAPOSAS, GEN_COMIDA_RAPOSAS, N_GEN, L, C, N;
-  int current_generation;
-  rf_ecosystem_object_t **environment;
-};
 
 typedef enum { NORTH, EAST, SOUTH, WEST } directions_t;
 
@@ -267,27 +262,58 @@ void rf_update_ecosystem_foxes(rf_ecosystem_t *es, rf_ecosystem_t *buffer_es) {
               column1 = column;
               _direction_adjacent_cell(direction_tmp, &line1, &column1);
 
-              if (buffer_es->environment[line1][column1].type == RF_FOX) {
-                if (buffer_es->environment[line1][column1].procreation_age <
-                    next_gen_fox.procreation_age) { // gets the fox with the
-                  // oldest procreation_age
-                  buffer_es->environment[line1][column1] = next_gen_fox;
-                } else if (buffer_es->environment[line1][column1]
-                               .procreation_age ==
-                           next_gen_fox
-                               .procreation_age) { // tie procreation_age
-                  if (buffer_es->environment[line1][column1].food_generations >
-                      next_gen_fox
-                          .food_generations) { // solves with food_generations
-                    buffer_es->environment[line1][column1] = next_gen_fox;
+              bool insert_fox_in_environment = false;
+              if (buffer_es->environment[line1][column1].type == RF_RABBIT) {
+                next_gen_fox.food_generations = 0;
+                /*buffer_es->environment[line1][column1] = next_gen_fox;*/
+                insert_fox_in_environment = true;
+              }
+
+              /*rf_ecosystem_object_t *rnext_gen_fox =*/
+              /*&buffer_es->environment[line1][column1];*/
+              if (next_gen_fox.food_generations < es->GEN_COMIDA_RAPOSAS) {
+                if (buffer_es->environment[line1][column1].type == RF_EMPTY) {
+                  /*buffer_es->environment[line1][column1] = next_gen_fox;*/
+                  insert_fox_in_environment = true;
+                } else if (buffer_es->environment[line1][column1].type ==
+                           RF_FOX) {
+                  if (buffer_es->environment[line1][column1].procreation_age <
+                      next_gen_fox.procreation_age) { // gets the fox with the
+                    // oldest procreation_age
+                    /*buffer_es->environment[line1][column1] = next_gen_fox;*/
+                    insert_fox_in_environment = true;
+                  } else if (buffer_es->environment[line1][column1]
+                                 .procreation_age ==
+                             next_gen_fox
+                                 .procreation_age) { // tie procreation_age
+                    if (buffer_es->environment[line1][column1]
+                            .food_generations >
+                        next_gen_fox.food_generations) { // solves with
+                                                         // food_generations
+                      /*buffer_es->environment[line1][column1] = next_gen_fox;*/
+                      insert_fox_in_environment = true;
+                    }
                   }
                 }
-              } else if (buffer_es->environment[line1][column1].type ==
-                         RF_RABBIT) {
-                next_gen_fox.food_generations = 0;
-                buffer_es->environment[line1][column1] = next_gen_fox;
+                /*es->environment[line][column] =
+                 * buffer_es->environment[line][column];*/
+                if ((next_gen_fox.procreation_age - 1) ==
+                    buffer_es->GEN_PROC_RAPOSAS) {
+                  /*line1 = next_gen_fox.previous_line;*/
+                  /*column1 = next_gen_fox.previous_column;*/
+                  buffer_es->environment[next_gen_fox.previous_line][next_gen_fox.previous_column].type = RF_FOX;
+                  buffer_es->environment[next_gen_fox.previous_line][next_gen_fox.previous_column].procreation_age = 0;
+                  buffer_es->environment[next_gen_fox.previous_line][next_gen_fox.previous_column].food_generations = 0;
+                  buffer_es->environment[next_gen_fox.previous_line][next_gen_fox.previous_column].previous_line = line1;
+                  buffer_es->environment[next_gen_fox.previous_line][next_gen_fox.previous_column].previous_column =
+                      column1;
+                  next_gen_fox.procreation_age = 0;
+                }
+                if (insert_fox_in_environment) {
+                  buffer_es->environment[line1][column1] = next_gen_fox;
+                }
               } else {
-                buffer_es->environment[line1][column1] = next_gen_fox;
+                buffer_es->environment[line1][column1].type = RF_EMPTY;
               }
               break;
             }
@@ -302,12 +328,12 @@ void rf_update_ecosystem_foxes(rf_ecosystem_t *es, rf_ecosystem_t *buffer_es) {
 
 void rf_update_ecosystem_rabbits_from_buffer(rf_ecosystem_t *es,
                                              rf_ecosystem_t *buffer_es) {
-
   int line, column;
   for (line = 0; line < es->L; line++) {
     for (column = 0; column < es->C; column++) {
       if (es->environment[line][column].type == RF_RABBIT) {
         es->environment[line][column].type = RF_EMPTY;
+        es->N--;
       }
     }
   }
@@ -315,6 +341,7 @@ void rf_update_ecosystem_rabbits_from_buffer(rf_ecosystem_t *es,
     for (column = 0; column < es->C; column++) {
       if (buffer_es->environment[line][column].type == RF_RABBIT) {
         es->environment[line][column] = buffer_es->environment[line][column];
+        es->N++;
       }
     }
   }
@@ -328,6 +355,7 @@ void rf_update_ecosystem_foxes_from_buffer(rf_ecosystem_t *es,
     for (column = 0; column < es->C; column++) {
       if (es->environment[line][column].type == RF_FOX) {
         es->environment[line][column].type = RF_EMPTY;
+        es->N--;
       }
     }
   }
@@ -335,21 +363,27 @@ void rf_update_ecosystem_foxes_from_buffer(rf_ecosystem_t *es,
     for (column = 0; column < es->C; column++) {
       buffer_es_obj_tmp = buffer_es->environment[line][column];
       es_obj_tmp = es->environment[line][column];
-      if (buffer_es_obj_tmp.type == RF_FOX &&
-          buffer_es_obj_tmp.food_generations < es->GEN_COMIDA_RAPOSAS) {
-        if ((buffer_es_obj_tmp.procreation_age - 1) ==
-            buffer_es->GEN_PROC_RAPOSAS) {
-          line1 = buffer_es_obj_tmp.previous_line;
-          column1 = buffer_es_obj_tmp.previous_column;
-          es->environment[line1][column1].type = RF_FOX;
-          es->environment[line1][column1].procreation_age = 0;
-          es->environment[line1][column1].food_generations = 0;
-          es->environment[line1][column1].previous_line = line1;
-          es->environment[line1][column1].previous_column = column1;
-          buffer_es_obj_tmp.procreation_age = 0;
-        }
-        es->environment[line][column] = buffer_es_obj_tmp;
+      if (buffer_es_obj_tmp.type == RF_FOX) {
+        es->environment[line][column] = buffer_es->environment[line][column];
       }
+      /*if (buffer_es_obj_tmp.type == RF_FOX &&*/
+      /*buffer_es_obj_tmp.food_generations < es->GEN_COMIDA_RAPOSAS) {*/
+      /*es->environment[line][column] = buffer_es->environment[line][column];*/
+      /*es->N++;*/
+      /*if ((buffer_es_obj_tmp.procreation_age - 1) ==*/
+      /*buffer_es->GEN_PROC_RAPOSAS) {*/
+      /*line1 = buffer_es_obj_tmp.previous_line;*/
+      /*column1 = buffer_es_obj_tmp.previous_column;*/
+      /*es->environment[line1][column1].type = RF_FOX;*/
+      /*es->environment[line1][column1].procreation_age = 0;*/
+      /*es->environment[line1][column1].food_generations = 0;*/
+      /*es->environment[line1][column1].previous_line = line1;*/
+      /*es->environment[line1][column1].previous_column = column1;*/
+      /*buffer_es_obj_tmp.procreation_age = 0;*/
+      /*es->N++;*/
+      /*}*/
+      /*es->environment[line][column] = buffer_es_obj_tmp;*/
+      /*}*/
     }
   }
 }
@@ -366,13 +400,14 @@ rf_ecosystem_t *rf_update_ecosystem_generations(rf_ecosystem_t *es) {
   rf_ecosystem_t *buffer_es = rf_clone_ecosystem(es);
   rf_ecosystem_t *tmp;
   int i = 0;
+  int generations_number = es->N_GEN;
 
 #ifndef NDEBUG
   printf("============= [%d] Generation =============\n", i);
   rf_print_ecosystem_environment(es);
 #endif
 
-  for (i = 1; i <= es->N_GEN; i++) {
+  for (i = 1; i <= generations_number; i++) {
     es->current_generation = i - 1;
     buffer_es->current_generation = i;
 
@@ -383,6 +418,7 @@ rf_ecosystem_t *rf_update_ecosystem_generations(rf_ecosystem_t *es) {
     printf("============= [%d] Generation =============\n", i);
     rf_print_ecosystem_environment(es);
 #endif
+    es->N_GEN--;
   }
 
   rf_free_ecosystem(buffer_es);

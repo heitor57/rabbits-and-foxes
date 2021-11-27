@@ -1,6 +1,18 @@
 
-[file-build-run-original]
+[file-build-run-debug]
 command=make debug && ./serial-rabbits-and-foxes < ./data/in/example.txt
+cwd=$(VIM_ROOT)
+output=terminal
+errorformat=%f:%l:%m
+save=1
+[file-build-run-original]
+command=make && ./serial-rabbits-and-foxes < ./data/in/example.txt
+cwd=$(VIM_ROOT)
+output=terminal
+errorformat=%f:%l:%m
+save=1
+[file-build-run-prof]
+command=make debug && ./serial-rabbits-and-foxes < ./data/in/example.txt && gprof ./serial-rabbits-and-foxes gmon.out > data/out/profile.txt
 cwd=$(VIM_ROOT)
 output=terminal
 errorformat=%f:%l:%m
