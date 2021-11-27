@@ -64,7 +64,7 @@ rf_ecosystem_object_t string_to_rf_ecosystem_object(char *string_buffer) {
  */
 rf_ecosystem_t* initial_setup(int argc, char **argv) {
   int num, i;
-  if (argc != 3) {
+  if (argc != 1) {
     printf("Usage:\n");
     printf("%s <input file> <output file>\n", argv[0]);
     printf("Examples:\n");
@@ -73,17 +73,17 @@ rf_ecosystem_t* initial_setup(int argc, char **argv) {
     printf("%s in.txt out2.txt\n", argv[0]);
     exit(1);
   }
-  char *fin_name = argv[1];
-  FILE *fin = fopen(fin_name, "r");
-  if (fin == NULL) {
-    fprintf(stderr, "Unable to open file %s\n", fin_name);
-    exit(1);
-  }
+  /*char *fin_name = argv[1];*/
+  /*FILE *fin = fopen(fin_name, "r");*/
+  /*if (fin == NULL) {*/
+    /*fprintf(stderr, "Unable to open file %s\n", fin_name);*/
+    /*exit(1);*/
+  /*}*/
   // create integers vector
-  int num_lines = file_num_lines(fin);
+  int num_lines = file_num_lines(stdin);
 
   int GEN_PROC_COELHOS, GEN_PROC_RAPOSAS, GEN_COMIDA_RAPOSAS, N_GEN, L, C, N;
-  fscanf(fin, "%d %d %d %d %d %d %d\n", &GEN_PROC_COELHOS, &GEN_PROC_RAPOSAS,
+  fscanf(stdin, "%d %d %d %d %d %d %d\n", &GEN_PROC_COELHOS, &GEN_PROC_RAPOSAS,
          &GEN_COMIDA_RAPOSAS, &N_GEN, &L, &C, &N);
   rf_ecosystem_t *es = rf_init_ecosystem(GEN_PROC_COELHOS, GEN_PROC_RAPOSAS,
                                          GEN_COMIDA_RAPOSAS, N_GEN, L, C, N);
@@ -94,7 +94,7 @@ rf_ecosystem_t* initial_setup(int argc, char **argv) {
   i = 0;
   int x, y;
   rf_ecosystem_object_t eco_obj;
-  while (fscanf(fin, "%s %d %d", string_buffer, &x, &y) > 0) {
+  while (fscanf(stdin, "%s %d %d", string_buffer, &x, &y) > 0) {
     eco_obj = string_to_rf_ecosystem_object(string_buffer);
     rf_insert_object_ecosystem(es, eco_obj, x, y);
     i++;
@@ -105,7 +105,6 @@ rf_ecosystem_t* initial_setup(int argc, char **argv) {
       break;
     }
   }
-  fclose(fin);
 
 #ifndef NDEBUG
   printf("%d lines\n", num_lines);

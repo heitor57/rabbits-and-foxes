@@ -1,6 +1,6 @@
 
 [file-build-run-original]
-command=make debug && ./serial-rabbits-and-foxes ./data/in/example.txt ./data/out/example.txt
+command=make debug && ./serial-rabbits-and-foxes < ./data/in/example.txt
 cwd=$(VIM_ROOT)
 output=terminal
 errorformat=%f:%l:%m

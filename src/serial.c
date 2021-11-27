@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
   /*max_number = get_max(integers, num_integers);*/
 
   clock_t begin = clock();
-
+  rf_update_ecosystem_generations(es);
   /*int *integers_num_divisors = NULL;*/
   /*integers_num_divisors = dfpack_serial_df(integers, max_number, num_integers);*/
   clock_t end = clock();
