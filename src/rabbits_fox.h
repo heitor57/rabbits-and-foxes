@@ -3,10 +3,21 @@
 #include "error.h"
 
 typedef struct ecosystem rf_ecosystem_t;
-// typedef enum ecosystem_object rf_ecosystem_object;
-typedef enum { RF_EMPTY=' ', RF_RABBIT='C', RF_FOX='R', RF_ROCK='*' } rf_ecosystem_object_t;
 
-rf_ecosystem_t *rf_init_ecosystem(int GEN_PROC_COELHOS, int GEN_PROC_RAPOSAS,
+// typedef enum ecosystem_object rf_ecosystem_object;
+typedef enum {
+  RF_EMPTY = ' ',
+  RF_RABBIT = 'C',
+  RF_FOX = 'R',
+  RF_ROCK = '*'
+} rf_ecosystem_object_type_t;
+
+typedef struct {
+  int procreation_age, food_generations;
+  rf_ecosystem_object_type_t type;
+} rf_ecosystem_object_t;
+
+rf_ecosystem_t *rf_new_ecosystem(int GEN_PROC_COELHOS, int GEN_PROC_RAPOSAS,
                                   int GEN_COMIDA_RAPOSAS, int N_GEN, int L,
                                   int C, int N);
 void rf_insert_object_ecosystem(rf_ecosystem_t *es, rf_ecosystem_object_t obj,
@@ -14,7 +25,10 @@ void rf_insert_object_ecosystem(rf_ecosystem_t *es, rf_ecosystem_object_t obj,
 
 void rf_free_ecosystem(rf_ecosystem_t *es);
 
-void rf_print_ecosystem_environment(rf_ecosystem_t* es);
+void rf_print_ecosystem_environment(rf_ecosystem_t *es);
 
-//int rf_ecosystem_get_N(rf_ecosystem_t *es);
+rf_ecosystem_t *rf_update_ecosystem_generations(rf_ecosystem_t *es) ;
+//rf_ecosystem_object_t *
+//rf_init_ecosystem_object(rf_ecosystem_object_type_t eco_type_obj);
+// int rf_ecosystem_get_N(rf_ecosystem_t *es);
 #endif

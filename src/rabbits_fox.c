@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#define next_cell(g, x, y, p) (((g) + (x) + (y)) % (p))
+
+
 struct ecosystem {
   int GEN_PROC_COELHOS, GEN_PROC_RAPOSAS, GEN_COMIDA_RAPOSAS, N_GEN, L, C, N;
   int current_generation;
@@ -9,12 +13,29 @@ struct ecosystem {
 };
 
 /*typedef struct {*/
+  /*int procreation_age, x, y;*/
+/*} rabbit_t;*/
+/*typedef struct {*/
+  /*int procreation_age, food_generations, x, y;*/
+/*} fox_t;*/
+
+
+/*typedef struct {*/
 /*int x, y;*/
 /*} coordinate_2d_t;*/
 
 typedef enum { NORTH, EAST, SOUTH, WEST } directions_t;
 
-rf_ecosystem_t *rf_init_ecosystem(int GEN_PROC_COELHOS, int GEN_PROC_RAPOSAS,
+/*rf_ecosystem_object_t * rf_init_ecosystem_object(rf_ecosystem_object_type_t eco_type_obj){*/
+
+  /*rf_ecosystem_object_t *eco_obj = malloc(sizeof(rf_ecosystem_object_t));*/
+  /*eco_obj->type=eco_type_obj;*/
+  /*eco_obj->food_generations=0;*/
+  /*eco_obj->procreation_age=0;*/
+  /*return eco_obj;*/
+/*}*/
+
+rf_ecosystem_t *rf_new_ecosystem(int GEN_PROC_COELHOS, int GEN_PROC_RAPOSAS,
                                   int GEN_COMIDA_RAPOSAS, int N_GEN, int L,
                                   int C, int N) {
 
@@ -33,7 +54,7 @@ rf_ecosystem_t *rf_init_ecosystem(int GEN_PROC_COELHOS, int GEN_PROC_RAPOSAS,
   for (int i = 0; i < es->L; i++) {
     es->environment[i] = malloc(sizeof(rf_ecosystem_object_t) * es->C);
     for (int j = 0; j < es->C; j++) {
-      es->environment[i][j] = RF_EMPTY;
+      es->environment[i][j].type = RF_EMPTY;
     }
   }
   return es;
@@ -48,7 +69,7 @@ rf_ecosystem_t *rf_clone_ecosystem(rf_ecosystem_t *es) {
     new_es->environment[i] = malloc(sizeof(rf_ecosystem_object_t) * new_es->C);
 
     memcpy(new_es->environment[i], es->environment[i],
-           new_es->C * sizeof(directions_t));
+           new_es->C * sizeof(rf_ecosystem_object_t));
   }
   return new_es;
 }
@@ -56,12 +77,12 @@ void rf_clear_environment(rf_ecosystem_t *es) {
   int i, j;
   for (i = 0; i < es->L; i++) {
     for (j = 0; j < es->C; j++) {
-      switch (es->environment[i][j]) {
+      switch (es->environment[i][j].type) {
       case RF_EMPTY:
       case RF_ROCK:
         break;
       default:
-        es->environment[i][j] = RF_EMPTY;
+        es->environment[i][j].type = RF_EMPTY;
         break;
       }
     }
@@ -95,7 +116,7 @@ void rf_print_ecosystem_environment(rf_ecosystem_t *es) {
   for (i = 0; i < es->L; i++) {
     printf("|");
     for (j = 0; j < es->C; j++) {
-      printf("%c", es->environment[i][j]);
+      printf("%c", es->environment[i][j].type);
     }
     printf("|\n");
   }
@@ -114,9 +135,13 @@ void rf_update_ecosystem_rabbits(rf_ecosystem_t *es, rf_ecosystem_t *new_es) {
   int x, y;
   for (x = 0; x < es->L; x++) {
     for (y = 0; y < es->C; y++) {
-      if (es->environment[x][y] == RF_RABBIT) {
+      if (es->environment[x][y].type == RF_RABBIT) {
 
-        es->environment[x][y];
+        /*es->environment[x][y];*/
+        /*es->environment[x + 1][y] es->environment[x][y + 1] es*/
+            /*->environment[x][y - 1] es->environment[x - 1][y]*/
+
+            /*next_cell(es->current_generation, x, y, 4);*/
       }
     }
   }

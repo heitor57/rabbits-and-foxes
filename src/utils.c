@@ -41,7 +41,7 @@ int get_max(int *vector, int num_elements) {
   return max;
 }
 
-rf_ecosystem_object_t string_to_rf_ecosystem_object(char *string_buffer) {
+rf_ecosystem_object_type_t string_to_rf_ecosystem_object(char *string_buffer) {
   if (!strcmp(string_buffer, "ROCHA")) {
     return RF_ROCK;
   } else if (!strcmp(string_buffer, "RAPOSA")) {
@@ -85,7 +85,7 @@ rf_ecosystem_t* initial_setup(int argc, char **argv) {
   int GEN_PROC_COELHOS, GEN_PROC_RAPOSAS, GEN_COMIDA_RAPOSAS, N_GEN, L, C, N;
   fscanf(stdin, "%d %d %d %d %d %d %d\n", &GEN_PROC_COELHOS, &GEN_PROC_RAPOSAS,
          &GEN_COMIDA_RAPOSAS, &N_GEN, &L, &C, &N);
-  rf_ecosystem_t *es = rf_init_ecosystem(GEN_PROC_COELHOS, GEN_PROC_RAPOSAS,
+  rf_ecosystem_t *es = rf_new_ecosystem(GEN_PROC_COELHOS, GEN_PROC_RAPOSAS,
                                          GEN_COMIDA_RAPOSAS, N_GEN, L, C, N);
   /*int *integers = malloc(sizeof(int) * num_lines);*/
   // read integers from file
@@ -93,9 +93,15 @@ rf_ecosystem_t* initial_setup(int argc, char **argv) {
   char string_buffer[255];
   i = 0;
   int x, y;
+  rf_ecosystem_object_type_t eco_type_obj;
   rf_ecosystem_object_t eco_obj;
+
   while (fscanf(stdin, "%s %d %d", string_buffer, &x, &y) > 0) {
-    eco_obj = string_to_rf_ecosystem_object(string_buffer);
+    eco_type_obj = string_to_rf_ecosystem_object(string_buffer);
+    /*obj.type = eco_obj;*/
+    eco_obj.type=eco_type_obj;
+    eco_obj.procreation_age=0;
+    eco_obj.food_generations=0;
     rf_insert_object_ecosystem(es, eco_obj, x, y);
     i++;
     if(i == N){
