@@ -4,7 +4,6 @@
 
 typedef struct ecosystem rf_ecosystem_t;
 
-// typedef enum ecosystem_object rf_ecosystem_object;
 typedef enum {
   RF_EMPTY = ' ',
   RF_RABBIT = 'C',
@@ -29,7 +28,4 @@ void rf_free_ecosystem(rf_ecosystem_t *es);
 void rf_print_ecosystem_environment(rf_ecosystem_t *es);
 
 rf_ecosystem_t *rf_update_ecosystem_generations(rf_ecosystem_t *es);
-// rf_ecosystem_object_t *
-// rf_init_ecosystem_object(rf_ecosystem_object_type_t eco_type_obj);
-//  int rf_ecosystem_get_N(rf_ecosystem_t *es);
 #endif
