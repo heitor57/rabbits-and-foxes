@@ -16,18 +16,6 @@ typedef enum { NORTH, EAST, SOUTH, WEST } directions_t;
 
 directions_t directions_order[] = {NORTH, EAST, SOUTH, WEST};
 
-int get_direction_index(directions_t direction) {
-  switch (direction) {
-  case NORTH:
-    return 0;
-  case EAST:
-    return 1;
-  case SOUTH:
-    return 2;
-  case WEST:
-    return 3;
-  }
-}
 void direction_adjacent_cell(directions_t direction, int *line, int *column) {
   switch (direction) {
   case NORTH:
