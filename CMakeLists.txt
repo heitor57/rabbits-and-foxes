@@ -45,8 +45,8 @@ add_executable(serial-rabbits-and-foxes ${SRC_FILES})
   #PRIVATE
   #m
   #MPI::MPI_C)
-target_compile_options(serial-rabbits-and-foxes PRIVATE -O3)
-#target_compile_options(serial-rabbits-and-foxes PRIVATE -pg -g)
+#target_compile_options(serial-rabbits-and-foxes PRIVATE -O3)
+target_compile_options(serial-rabbits-and-foxes PRIVATE -pg -g)
 #target_link_options(serialdf PRIVATE -pg -g)
 
 #target_compile_definitions(serialdf PUBLIC "$<$<CONFIG:DEBUG>:DEBUG>")
