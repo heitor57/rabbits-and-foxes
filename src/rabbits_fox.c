@@ -2,9 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#define DIRECTIONS_NUMBER 4
 #define next_cell(g, x, y, p) (((g) + (x) + (y)) % (p))
-
 
 struct ecosystem {
   int GEN_PROC_COELHOS, GEN_PROC_RAPOSAS, GEN_COMIDA_RAPOSAS, N_GEN, L, C, N;
@@ -13,12 +12,11 @@ struct ecosystem {
 };
 
 /*typedef struct {*/
-  /*int procreation_age, x, y;*/
+/*int procreation_age, x, y;*/
 /*} rabbit_t;*/
 /*typedef struct {*/
-  /*int procreation_age, food_generations, x, y;*/
+/*int procreation_age, food_generations, x, y;*/
 /*} fox_t;*/
-
 
 /*typedef struct {*/
 /*int x, y;*/
@@ -26,18 +24,50 @@ struct ecosystem {
 
 typedef enum { NORTH, EAST, SOUTH, WEST } directions_t;
 
-/*rf_ecosystem_object_t * rf_init_ecosystem_object(rf_ecosystem_object_type_t eco_type_obj){*/
+directions_t directions_order[] = {NORTH, EAST, SOUTH, WEST};
 
-  /*rf_ecosystem_object_t *eco_obj = malloc(sizeof(rf_ecosystem_object_t));*/
-  /*eco_obj->type=eco_type_obj;*/
-  /*eco_obj->food_generations=0;*/
-  /*eco_obj->procreation_age=0;*/
-  /*return eco_obj;*/
+int get_direction_index(directions_t direction) {
+  switch (direction) {
+  case NORTH:
+    return 0;
+  case EAST:
+    return 1;
+  case SOUTH:
+    return 2;
+  case WEST:
+    return 3;
+  }
+}
+void direction_adjacent_cell(directions_t direction, int *x, int *y) {
+  switch (direction) {
+  case NORTH:
+    (*y)++;
+    break;
+  case EAST:
+    (*x)++;
+    break;
+  case SOUTH:
+    (*y)--;
+    break;
+  case WEST:
+    (*x)--;
+    break;
+  }
+}
+
+/*rf_ecosystem_object_t * rf_init_ecosystem_object(rf_ecosystem_object_type_t
+ * eco_type_obj){*/
+
+/*rf_ecosystem_object_t *eco_obj = malloc(sizeof(rf_ecosystem_object_t));*/
+/*eco_obj->type=eco_type_obj;*/
+/*eco_obj->food_generations=0;*/
+/*eco_obj->procreation_age=0;*/
+/*return eco_obj;*/
 /*}*/
 
 rf_ecosystem_t *rf_new_ecosystem(int GEN_PROC_COELHOS, int GEN_PROC_RAPOSAS,
-                                  int GEN_COMIDA_RAPOSAS, int N_GEN, int L,
-                                  int C, int N) {
+                                 int GEN_COMIDA_RAPOSAS, int N_GEN, int L,
+                                 int C, int N) {
 
   rf_ecosystem_t *es = malloc(sizeof(rf_ecosystem_t));
 
@@ -131,17 +161,67 @@ void rf_print_ecosystem_environment(rf_ecosystem_t *es) {
 
 /*coordinate_2d_t rf_rabbit_new_position(rf_ecosystem_t *es) {*/
 /*}*/
+
 void rf_update_ecosystem_rabbits(rf_ecosystem_t *es, rf_ecosystem_t *new_es) {
-  int x, y;
+  int x, y, z;
+  int x1, y1;
+  int directions_value[DIRECTIONS_NUMBER];
+  int directions_counter;
+  int next_cell_value;
+  directions_t direction_tmp;
   for (x = 0; x < es->L; x++) {
     for (y = 0; y < es->C; y++) {
+      for (z = 0; z < DIRECTIONS_NUMBER; z++) {
+        directions_value[z] = -1;
+      }
       if (es->environment[x][y].type == RF_RABBIT) {
+        rf_ecosystem_object_t next_gen_rabbit = es->environment[x][y];
+        next_gen_rabbit.procreation_age++;
 
-        /*es->environment[x][y];*/
-        /*es->environment[x + 1][y] es->environment[x][y + 1] es*/
-            /*->environment[x][y - 1] es->environment[x - 1][y]*/
+        directions_counter = 0;
+        for (z = 0; z < DIRECTIONS_NUMBER; z++) {
+          x1 = x;
+          y1 = y;
+          direction_tmp = directions_order[z];
+          direction_adjacent_cell(direction_tmp, &x1, &y1);
+          switch (es->environment[x1][y1].type) {
+          case RF_EMPTY:
+            directions_value[z] = directions_counter;
+            directions_counter++;
+            break;
+          default:
+            break;
+          }
+        }
 
-            /*next_cell(es->current_generation, x, y, 4);*/
+        if (directions_counter > 0) {
+          next_cell_value =
+              next_cell(es->current_generation, x, y, directions_counter);
+
+          for (z = 0; z < DIRECTIONS_NUMBER; z++) {
+            if (directions_value[z] == next_cell_value) {
+              direction_tmp = directions_order[z];
+              x1 = x;
+              y1 = y;
+              direction_adjacent_cell(direction_tmp, &x1, &y1);
+              if (new_es->environment[x1][y1].type == RF_RABBIT) {
+                if (es->environment[x][y].procreation_age==es->GEN_PROC_COELHOS) {
+                  new_es->environment[x][y].type = RF_RABBIT;
+                  new_es->environment[x][y].procreation_age = 0;
+                  next_gen_rabbit.procreation_age=0;
+                }
+                if (new_es->environment[x1][y1].procreation_age<next_gen_rabbit.procreation_age) {
+                  new_es->environment[x1][y1] = next_gen_rabbit;
+                }
+              }else{
+                new_es->environment[x1][y1] = next_gen_rabbit;
+              }
+              break;
+            }
+          }
+        } else {
+          new_es->environment[x][y] = es->environment[x][y];
+        }
       }
     }
   }
