@@ -100,8 +100,6 @@ rf_ecosystem_t* initial_setup(int argc, char **argv) {
     eco_type_obj = string_to_rf_ecosystem_object(string_buffer);
     /*obj.type = eco_obj;*/
     eco_obj.type=eco_type_obj;
-    eco_obj.procreation_age=0;
-    eco_obj.food_generations=0;
     rf_insert_object_ecosystem(es, eco_obj, x, y);
     i++;
     if(i == N){
