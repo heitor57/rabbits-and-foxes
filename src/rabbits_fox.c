@@ -16,7 +16,7 @@ typedef enum { NORTH, EAST, SOUTH, WEST } directions_t;
 
 directions_t directions_order[] = {NORTH, EAST, SOUTH, WEST};
 
-void direction_adjacent_cell(directions_t direction, int *line, int *column) {
+void _direction_adjacent_cell(directions_t direction, int *line, int *column) {
   switch (direction) {
   case NORTH:
     (*line)--;
@@ -149,7 +149,7 @@ void rf_enumerate_directions(rf_ecosystem_t *es, int *directions_available,
     line1 = line;
     column1 = column;
     direction_tmp = directions_order[z];
-    direction_adjacent_cell(direction_tmp, &line1, &column1);
+    _direction_adjacent_cell(direction_tmp, &line1, &column1);
     rf_ecosystem_object_t *tmp_obj =
         rf_get_ecosystem_object(es, line1, column1, &status);
 
@@ -160,7 +160,8 @@ void rf_enumerate_directions(rf_ecosystem_t *es, int *directions_available,
   }
 }
 
-void rf_update_ecosystem_rabbits(rf_ecosystem_t *es, rf_ecosystem_t *new_es) {
+void rf_update_ecosystem_rabbits(rf_ecosystem_t *es,
+                                 rf_ecosystem_t *buffer_es) {
   int line, column, z;
   int line1, column1;
   int directions_available[DIRECTIONS_NUMBER];
@@ -187,42 +188,42 @@ void rf_update_ecosystem_rabbits(rf_ecosystem_t *es, rf_ecosystem_t *new_es) {
               direction_tmp = directions_order[z];
               line1 = line;
               column1 = column;
-              direction_adjacent_cell(direction_tmp, &line1, &column1);
+              _direction_adjacent_cell(direction_tmp, &line1, &column1);
 
               if ((next_gen_rabbit.procreation_age - 1) ==
                   es->GEN_PROC_COELHOS) {
-                new_es
+                buffer_es
                     ->environment[next_gen_rabbit.previous_line]
                                  [next_gen_rabbit.previous_column]
                     .type = RF_RABBIT;
-                new_es
+                buffer_es
                     ->environment[next_gen_rabbit.previous_line]
                                  [next_gen_rabbit.previous_column]
                     .procreation_age = 0;
-                new_es
+                buffer_es
                     ->environment[next_gen_rabbit.previous_line]
                                  [next_gen_rabbit.previous_column]
                     .previous_line = line1;
-                new_es
+                buffer_es
                     ->environment[next_gen_rabbit.previous_line]
                                  [next_gen_rabbit.previous_column]
                     .previous_column = column1;
                 next_gen_rabbit.procreation_age = 0;
               }
-              if (new_es->environment[line1][column1].type == RF_RABBIT) {
+              if (buffer_es->environment[line1][column1].type == RF_RABBIT) {
 
-                if (new_es->environment[line1][column1].procreation_age <
+                if (buffer_es->environment[line1][column1].procreation_age <
                     next_gen_rabbit.procreation_age) {
-                  new_es->environment[line1][column1] = next_gen_rabbit;
+                  buffer_es->environment[line1][column1] = next_gen_rabbit;
                 }
               } else {
-                new_es->environment[line1][column1] = next_gen_rabbit;
+                buffer_es->environment[line1][column1] = next_gen_rabbit;
               }
               break;
             }
           }
         } else {
-          new_es->environment[line][column] = next_gen_rabbit;
+          buffer_es->environment[line][column] = next_gen_rabbit;
         }
       }
     }
@@ -264,7 +265,7 @@ void rf_update_ecosystem_foxes(rf_ecosystem_t *es, rf_ecosystem_t *buffer_es) {
               direction_tmp = directions_order[z];
               line1 = line;
               column1 = column;
-              direction_adjacent_cell(direction_tmp, &line1, &column1);
+              _direction_adjacent_cell(direction_tmp, &line1, &column1);
 
               if (buffer_es->environment[line1][column1].type == RF_FOX) {
                 if (buffer_es->environment[line1][column1].procreation_age <
@@ -299,11 +300,10 @@ void rf_update_ecosystem_foxes(rf_ecosystem_t *es, rf_ecosystem_t *buffer_es) {
   }
 }
 
-void rf_update_ecosystem_generation(rf_ecosystem_t *es,
-                                    rf_ecosystem_t *buffer_es) {
+void rf_update_ecosystem_rabbits_from_buffer(rf_ecosystem_t *es,
+                                             rf_ecosystem_t *buffer_es) {
 
   int line, column;
-  rf_update_ecosystem_rabbits(es, buffer_es);
   for (line = 0; line < es->L; line++) {
     for (column = 0; column < es->C; column++) {
       if (es->environment[line][column].type == RF_RABBIT) {
@@ -318,9 +318,12 @@ void rf_update_ecosystem_generation(rf_ecosystem_t *es,
       }
     }
   }
-
-  rf_update_ecosystem_foxes(es, buffer_es);
-
+}
+void rf_update_ecosystem_foxes_from_buffer(rf_ecosystem_t *es,
+                                           rf_ecosystem_t *buffer_es) {
+  int line, column;
+  int line1, column1;
+  rf_ecosystem_object_t buffer_es_obj_tmp, es_obj_tmp;
   for (line = 0; line < es->L; line++) {
     for (column = 0; column < es->C; column++) {
       if (es->environment[line][column].type == RF_FOX) {
@@ -328,8 +331,6 @@ void rf_update_ecosystem_generation(rf_ecosystem_t *es,
       }
     }
   }
-  rf_ecosystem_object_t buffer_es_obj_tmp, es_obj_tmp;
-  int line1, column1;
   for (line = 0; line < es->L; line++) {
     for (column = 0; column < es->C; column++) {
       buffer_es_obj_tmp = buffer_es->environment[line][column];
@@ -352,12 +353,26 @@ void rf_update_ecosystem_generation(rf_ecosystem_t *es,
     }
   }
 }
+void rf_update_ecosystem_generation(rf_ecosystem_t *es,
+                                    rf_ecosystem_t *buffer_es) {
+
+  rf_update_ecosystem_rabbits(es, buffer_es);
+  rf_update_ecosystem_rabbits_from_buffer(es, buffer_es);
+  rf_update_ecosystem_foxes(es, buffer_es);
+  rf_update_ecosystem_foxes_from_buffer(es, buffer_es);
+}
 
 rf_ecosystem_t *rf_update_ecosystem_generations(rf_ecosystem_t *es) {
   rf_ecosystem_t *buffer_es = rf_clone_ecosystem(es);
   rf_ecosystem_t *tmp;
+  int i = 0;
 
-  for (int i = 1; i <= es->N_GEN; i++) {
+#ifndef NDEBUG
+  printf("============= [%d] Generation =============\n", i);
+  rf_print_ecosystem_environment(es);
+#endif
+
+  for (i = 1; i <= es->N_GEN; i++) {
     es->current_generation = i - 1;
     buffer_es->current_generation = i;
 
@@ -369,5 +384,7 @@ rf_ecosystem_t *rf_update_ecosystem_generations(rf_ecosystem_t *es) {
     rf_print_ecosystem_environment(es);
 #endif
   }
+
+  rf_free_ecosystem(buffer_es);
   return es;
 }

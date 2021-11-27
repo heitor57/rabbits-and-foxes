@@ -6,7 +6,7 @@ output=terminal
 errorformat=%f:%l:%m
 save=1
 [file-build-run-valgrind]
-command=make && valgrind --leak-check=full --show-leak-kinds=all ./serialdf ./data/t1.txt ./data/t1_out.txt
+command=make && valgrind --leak-check=full --show-leak-kinds=all ./serial-rabbits-and-foxes < ./data/in/example.txt
 cwd=$(VIM_ROOT)
 output=quickfix
 errorformat=%f:%l:%m
