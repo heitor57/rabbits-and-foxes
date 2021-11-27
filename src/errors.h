@@ -4,9 +4,10 @@
 
 typedef enum
 {
-    E_SUCCESS = 0,
-    E_INVALID_INPUT = 1,
-    E_FILE_NOT_FOUND = 2,
+    E_SUCCESS,
+    E_INVALID_INPUT,
+    E_FILE_NOT_FOUND,
+    E_OUT_OF_BOUNDS,
 }error_t;
 
 #endif

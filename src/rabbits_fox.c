@@ -1,4 +1,5 @@
 #include "rabbits_fox.h"
+#include "errors.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -162,6 +163,16 @@ void rf_print_ecosystem_environment(rf_ecosystem_t *es) {
 /*coordinate_2d_t rf_rabbit_new_position(rf_ecosystem_t *es) {*/
 /*}*/
 
+rf_ecosystem_object_t *rf_get_ecosystem_object(rf_ecosystem_t *es, int x, int y,
+                                               error_t *status) {
+  if (x < es->C && x >= 0 && y >= 0 && y < es->L) {
+    *status = E_SUCCESS;
+    return &(es->environment[x][y]);
+  }
+  *status = E_OUT_OF_BOUNDS;
+  return NULL;
+}
+
 void rf_update_ecosystem_rabbits(rf_ecosystem_t *es, rf_ecosystem_t *new_es) {
   int x, y, z;
   int x1, y1;
@@ -169,6 +180,7 @@ void rf_update_ecosystem_rabbits(rf_ecosystem_t *es, rf_ecosystem_t *new_es) {
   int directions_counter;
   int next_cell_value;
   directions_t direction_tmp;
+  error_t status;
   for (x = 0; x < es->L; x++) {
     for (y = 0; y < es->C; y++) {
       for (z = 0; z < DIRECTIONS_NUMBER; z++) {
@@ -184,13 +196,17 @@ void rf_update_ecosystem_rabbits(rf_ecosystem_t *es, rf_ecosystem_t *new_es) {
           y1 = y;
           direction_tmp = directions_order[z];
           direction_adjacent_cell(direction_tmp, &x1, &y1);
-          switch (es->environment[x1][y1].type) {
-          case RF_EMPTY:
-            directions_value[z] = directions_counter;
-            directions_counter++;
-            break;
-          default:
-            break;
+          rf_ecosystem_object_t *tmp_obj = rf_get_ecosystem_object(es, x1, y1, &status);
+
+          if (status == E_SUCCESS) {
+            switch (tmp_obj->type) {
+            case RF_EMPTY:
+              directions_value[z] = directions_counter;
+              directions_counter++;
+              break;
+            default:
+              break;
+            }
           }
         }
 
@@ -205,15 +221,17 @@ void rf_update_ecosystem_rabbits(rf_ecosystem_t *es, rf_ecosystem_t *new_es) {
               y1 = y;
               direction_adjacent_cell(direction_tmp, &x1, &y1);
               if (new_es->environment[x1][y1].type == RF_RABBIT) {
-                if (es->environment[x][y].procreation_age==es->GEN_PROC_COELHOS) {
+                if (es->environment[x][y].procreation_age ==
+                    es->GEN_PROC_COELHOS) {
                   new_es->environment[x][y].type = RF_RABBIT;
                   new_es->environment[x][y].procreation_age = 0;
-                  next_gen_rabbit.procreation_age=0;
+                  next_gen_rabbit.procreation_age = 0;
                 }
-                if (new_es->environment[x1][y1].procreation_age<next_gen_rabbit.procreation_age) {
+                if (new_es->environment[x1][y1].procreation_age <
+                    next_gen_rabbit.procreation_age) {
                   new_es->environment[x1][y1] = next_gen_rabbit;
                 }
-              }else{
+              } else {
                 new_es->environment[x1][y1] = next_gen_rabbit;
               }
               break;
@@ -230,6 +248,12 @@ void rf_update_ecosystem_foxes(rf_ecosystem_t *es, rf_ecosystem_t *new_es) {}
 void rf_update_ecosystem_generation(rf_ecosystem_t *es,
                                     rf_ecosystem_t *new_es) {
   rf_update_ecosystem_rabbits(es, new_es);
+
+#ifndef NDEBUG
+  printf("Rabbit new es:\n");
+  rf_print_ecosystem_environment(new_es);
+#endif
+
   rf_update_ecosystem_foxes(es, new_es);
   new_es->current_generation++;
   es->current_generation++;
@@ -245,6 +269,10 @@ rf_ecosystem_t *rf_update_ecosystem_generations(rf_ecosystem_t *es) {
 
   for (int i = 0; i < es->N_GEN; i++) {
     rf_clear_environment(new_es);
+#ifndef NDEBUG
+    printf("[%d] cleared new ecosystem environment:\n", i);
+    rf_print_ecosystem_environment(new_es);
+#endif
     rf_update_ecosystem_generation(es, new_es);
     tmp = es;
     es = new_es;
