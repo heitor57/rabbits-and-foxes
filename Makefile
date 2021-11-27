@@ -1,4 +1,4 @@
-all: release
+all: debug
 clean:
 	cmake --build ./build --target clean
 	rm -rf build
