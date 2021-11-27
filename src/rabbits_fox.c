@@ -301,12 +301,26 @@ void rf_update_ecosystem_foxes(rf_ecosystem_t *es, rf_ecosystem_t *buffer_es) {
                     buffer_es->GEN_PROC_RAPOSAS) {
                   /*line1 = next_gen_fox.previous_line;*/
                   /*column1 = next_gen_fox.previous_column;*/
-                  buffer_es->environment[next_gen_fox.previous_line][next_gen_fox.previous_column].type = RF_FOX;
-                  buffer_es->environment[next_gen_fox.previous_line][next_gen_fox.previous_column].procreation_age = 0;
-                  buffer_es->environment[next_gen_fox.previous_line][next_gen_fox.previous_column].food_generations = 0;
-                  buffer_es->environment[next_gen_fox.previous_line][next_gen_fox.previous_column].previous_line = line1;
-                  buffer_es->environment[next_gen_fox.previous_line][next_gen_fox.previous_column].previous_column =
-                      column1;
+                  buffer_es
+                      ->environment[next_gen_fox.previous_line]
+                                   [next_gen_fox.previous_column]
+                      .type = RF_FOX;
+                  buffer_es
+                      ->environment[next_gen_fox.previous_line]
+                                   [next_gen_fox.previous_column]
+                      .procreation_age = 0;
+                  buffer_es
+                      ->environment[next_gen_fox.previous_line]
+                                   [next_gen_fox.previous_column]
+                      .food_generations = 0;
+                  buffer_es
+                      ->environment[next_gen_fox.previous_line]
+                                   [next_gen_fox.previous_column]
+                      .previous_line = line1;
+                  buffer_es
+                      ->environment[next_gen_fox.previous_line]
+                                   [next_gen_fox.previous_column]
+                      .previous_column = column1;
                   next_gen_fox.procreation_age = 0;
                 }
                 if (insert_fox_in_environment) {
@@ -364,7 +378,11 @@ void rf_update_ecosystem_foxes_from_buffer(rf_ecosystem_t *es,
       buffer_es_obj_tmp = buffer_es->environment[line][column];
       es_obj_tmp = es->environment[line][column];
       if (buffer_es_obj_tmp.type == RF_FOX) {
+        if(es->environment[line][column].type != RF_EMPTY){
+          es->N--;
+        }
         es->environment[line][column] = buffer_es->environment[line][column];
+        es->N++;
       }
       /*if (buffer_es_obj_tmp.type == RF_FOX &&*/
       /*buffer_es_obj_tmp.food_generations < es->GEN_COMIDA_RAPOSAS) {*/
