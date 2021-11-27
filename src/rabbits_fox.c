@@ -257,11 +257,11 @@ void rf_update_ecosystem_foxes(rf_ecosystem_t *es, rf_ecosystem_t *new_es) {
     for (column = 0; column < es->C; column++) {
 
       if (es->environment[line][column].type == RF_FOX) {
-        if (es->environment[line][column].food_generations !=
+        rf_ecosystem_object_t next_gen_fox = es->environment[line][column];
+        next_gen_fox.food_generations++;
+        if (next_gen_fox.food_generations <
             es->GEN_COMIDA_RAPOSAS) {
-          rf_ecosystem_object_t next_gen_fox = es->environment[line][column];
           next_gen_fox.procreation_age++;
-          next_gen_fox.food_generations++;
           next_gen_fox.previous_line = line;
           next_gen_fox.previous_column = column;
 
