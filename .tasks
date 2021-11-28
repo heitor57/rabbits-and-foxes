@@ -1,4 +1,15 @@
-
+[file-build-run-test-datagen]
+command=make release_time_debug && python3 test/dataset_generator.py
+cwd=$(VIM_ROOT)
+output=terminal
+errorformat=%f:%l:%m
+save=1
+[file-build-run-test-run]
+command=make release_time_debug && python3 test/run_all.py
+cwd=$(VIM_ROOT)
+output=terminal
+errorformat=%f:%l:%m
+save=1
 [file-build-run-debug]
 command=make debug && ./serial-rabbits-and-foxes < ./data/in/example.txt
 cwd=$(VIM_ROOT)
