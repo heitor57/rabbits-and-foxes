@@ -163,7 +163,6 @@ void rf_update_ecosystem_rabbits(rf_ecosystem_t *es,
   int directions_counter;
   int next_cell_value;
   directions_t direction_tmp;
-  error_t status;
   for (line = 0; line < es->L; line++) {
     for (column = 0; column < es->C; column++) {
       if (es->environment[line][column].type == RF_RABBIT) {
@@ -233,7 +232,6 @@ void rf_update_ecosystem_foxes(rf_ecosystem_t *es, rf_ecosystem_t *buffer_es) {
   int directions_counter;
   int next_cell_value;
   directions_t direction_tmp;
-  error_t status;
   for (line = 0; line < es->L; line++) {
     for (column = 0; column < es->C; column++) {
 
@@ -363,8 +361,7 @@ void rf_update_ecosystem_rabbits_from_buffer(rf_ecosystem_t *es,
 void rf_update_ecosystem_foxes_from_buffer(rf_ecosystem_t *es,
                                            rf_ecosystem_t *buffer_es) {
   int line, column;
-  int line1, column1;
-  rf_ecosystem_object_t buffer_es_obj_tmp, es_obj_tmp;
+  rf_ecosystem_object_t buffer_es_obj_tmp,es_obj_tmp;
   for (line = 0; line < es->L; line++) {
     for (column = 0; column < es->C; column++) {
       if (es->environment[line][column].type == RF_FOX) {
@@ -398,7 +395,6 @@ void rf_update_ecosystem_generation(rf_ecosystem_t *es,
 
 rf_ecosystem_t *rf_update_ecosystem_generations(rf_ecosystem_t *es) {
   rf_ecosystem_t *buffer_es = rf_clone_ecosystem(es);
-  rf_ecosystem_t *tmp;
   int i = 0;
   int generations_number = es->N_GEN;
 

@@ -29,13 +29,19 @@ def create_path_to_file(file_name):
 
 
 parameters = (
-    cycler(L=2 ** (np.arange(3, dtype=int) + 7))
-    * cycler(C=2 ** (np.arange(3, dtype=int) + 7))
-    * cycler(N=2 ** (np.arange(3, dtype=int) + 6))
-    * cycler(GEN_PROC_COELHOS=[2, 4, 6])
-    * cycler(GEN_PROC_RAPOSAS=[4, 5, 6])
-    * cycler(GEN_COMIDA_RAPOSAS=[3, 4, 5])
-    * cycler(N_GEN=[6, 36, 100, 226])
+    # cycler(L=2 ** (np.arange(3, dtype=int) + 7))
+    # * cycler(C=2 ** (np.arange(3, dtype=int) + 7))
+    # * cycler(N=2 ** (np.arange(3, dtype=int) + 6))
+    cycler(L=2 ** (np.arange(3, dtype=int) + 4))
+    * cycler(C=2 ** (np.arange(3, dtype=int) + 4))
+    * cycler(N=2 ** (np.arange(3, dtype=int) + 3))
+    * cycler(GEN_PROC_COELHOS=[2])
+    * cycler(GEN_PROC_RAPOSAS=[4])
+    * cycler(GEN_COMIDA_RAPOSAS=[3])
+    # * cycler(GEN_PROC_COELHOS=[2, 4, 6])
+    # * cycler(GEN_PROC_RAPOSAS=[4, 5, 6])
+    # * cycler(GEN_COMIDA_RAPOSAS=[3, 4, 5])
+    * cycler(N_GEN=[200])
 )
 
 def create_dataset(f,param):
@@ -62,3 +68,44 @@ def create_dataset(f,param):
             f.write("{} {} {}\n".format(choice, line, column))
             i += 1
 
+
+
+def already_ran(parameters, experiment_id, runs_infos):
+    """Best-effort detection of if a run with the given entrypoint name,
+    parameters, and experiment id already ran. The run must have completed
+    successfully and have at least the parameters provided.
+    """
+
+    def _get_params(run):
+        """Converts [mlflow.entities.Param] to a dictionary of {k: v}."""
+        return run.data.params
+    # print('Exp',experiment_id)
+    all_run_infos = runs_infos
+    for run_info in all_run_infos:
+        # print(run_info)
+
+        full_run = mlflow.get_run(run_info.run_uuid)
+        run_params = _get_params(full_run)
+        match_failed = False
+        # print(parameters)
+        # print(run_params)
+        for param_key, param_value in parameters.items():
+            run_value = run_params.get(param_key)
+            if run_value != param_value:
+                match_failed = True
+                break
+        if match_failed:
+            continue
+
+        if run_info.status != "FINISHED":
+            print(
+                (
+                    "Run matched, but is not FINISHED, so skipping "
+                    "(run_id=%s, status=%s)"
+                )
+                % (run_info.run_uuid, run_info.status)
+            )
+            continue
+        return mlflow.get_run(run_info.run_uuid)
+    # raise IndexError("Could not find the run with the given parameters.")
+    return None

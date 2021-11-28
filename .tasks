@@ -11,6 +11,12 @@ cwd=$(VIM_ROOT)
 output=terminal
 errorformat=%f:%l:%m
 save=1
+[file-build-run-time]
+command=make release_time_debug && ./serial-rabbits-and-foxes < ./data/in/example.txt
+cwd=$(VIM_ROOT)
+output=terminal
+errorformat=%f:%l:%m
+save=1
 [file-build-run-prof]
 command=make debug && ./serial-rabbits-and-foxes < ./data/in/example.txt && gprof ./serial-rabbits-and-foxes gmon.out > data/out/profile.txt
 cwd=$(VIM_ROOT)
@@ -18,7 +24,7 @@ output=terminal
 errorformat=%f:%l:%m
 save=1
 [file-build-run-valgrind]
-command=make && valgrind --leak-check=full --show-leak-kinds=all ./serial-rabbits-and-foxes < ./data/in/example.txt
+command=make && valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./serial-rabbits-and-foxes < ./data/in/example.txt
 cwd=$(VIM_ROOT)
 output=quickfix
 errorformat=%f:%l:%m

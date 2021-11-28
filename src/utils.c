@@ -24,6 +24,19 @@ int file_num_lines(FILE *f) {
   return lines;
 }
 
+/*const char object_type_strings[][20] = {"ROCHA","RAPOSA","COELHO","UNKNOWN"};*/
+/*const char* */
+/*rf_ecosystem_object_type_to_string(rf_ecosystem_object_type_t object_type) {*/
+  /*if (object_type == RF_ROCK) {*/
+    /*return object_type_strings[0];*/
+  /*} else if (object_type == RF_FOX) {*/
+    /*return object_type_strings[1];*/
+  /*} else if (object_type == RF_RABBIT) {*/
+    /*return object_type_strings[2];*/
+  /*} else {*/
+    /*return object_type_strings[3];*/
+  /*}*/
+/*}*/
 char *
 rf_ecosystem_object_type_to_string(rf_ecosystem_object_type_t object_type) {
   if (object_type == RF_ROCK) {
@@ -80,8 +93,7 @@ void print_ecosystem_full_report(rf_ecosystem_t *es) {
  * @return integers read from the input file
  */
 rf_ecosystem_t *initial_setup() {
-  int num, i;
-  int num_lines = file_num_lines(stdin);
+  int i;
 
   int GEN_PROC_COELHOS, GEN_PROC_RAPOSAS, GEN_COMIDA_RAPOSAS, N_GEN, L, C, N;
   fscanf(stdin, "%d %d %d %d %d %d %d\n", &GEN_PROC_COELHOS, &GEN_PROC_RAPOSAS,
@@ -89,10 +101,10 @@ rf_ecosystem_t *initial_setup() {
   rf_ecosystem_t *es = rf_new_ecosystem(GEN_PROC_COELHOS, GEN_PROC_RAPOSAS,
                                         GEN_COMIDA_RAPOSAS, N_GEN, L, C, N);
   char string_buffer[255];
-  i = 0;
   int x, y;
   rf_ecosystem_object_type_t eco_type_obj;
   rf_ecosystem_object_t eco_obj;
+  i = 0;
 
   while (fscanf(stdin, "%s %d %d", string_buffer, &x, &y) > 0) {
     eco_type_obj = string_to_rf_ecosystem_object_type(string_buffer);
@@ -103,6 +115,5 @@ rf_ecosystem_t *initial_setup() {
       break;
     }
   }
-
   return es;
 }

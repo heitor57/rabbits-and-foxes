@@ -9,6 +9,7 @@ import utils
 
 if __name__ == "__main__":
     np.random.seed(utils.RAND_SEED)
+    mlflow.set_experiment("dataset")
     for param in utils.parameters:
         print(param)
         with mlflow.start_run():
