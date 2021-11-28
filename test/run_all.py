@@ -3,6 +3,7 @@ import numpy as np
 import subprocess
 from cycler import cycler
 import mlflow
+import os
 from mlflow.tracking.client import MlflowClient
 import secrets
 from pathlib import Path
@@ -39,13 +40,18 @@ if __name__ == "__main__":
         with mlflow.start_run():
             for k, v in param.items():
                 mlflow.log_param(k, v)
-            result = subprocess.run(
-                ["./serial-rabbits-and-foxes", "<", artifact_path],
-                stdout=subprocess.PIPE,
-            )
-            result_text = result.stdout.decode("utf-8")
+            result=os.popen("./serial-rabbits-and-foxes < "+artifact_path).read()
+            result_text = result
+            # result = subprocess.run(
+                # ["./serial-rabbits-and-foxes", "<", artifact_path],
+                # stdout=subprocess.PIPE,
+            # )
+            # result_text = result.stdout.decode("utf-8")
+            # print(result_text.splitlines()[0])
             last_line = result_text.splitlines()[-1]
-            print(last_line)
+            # print(last_line)
+
+            print(result_text)
 
             last_line = last_line[len("Time spend with computation: ") : -1]
             # print()
