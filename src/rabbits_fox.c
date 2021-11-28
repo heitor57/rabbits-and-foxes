@@ -263,22 +263,17 @@ void rf_update_ecosystem_foxes(rf_ecosystem_t *es, rf_ecosystem_t *buffer_es) {
               bool insert_fox_in_environment = false;
               if (buffer_es->environment[line1][column1].type == RF_RABBIT) {
                 next_gen_fox.food_generations = 0;
-                /*buffer_es->environment[line1][column1] = next_gen_fox;*/
                 insert_fox_in_environment = true;
               }
 
-              /*rf_ecosystem_object_t *rnext_gen_fox =*/
-              /*&buffer_es->environment[line1][column1];*/
               if (next_gen_fox.food_generations < es->GEN_COMIDA_RAPOSAS) {
                 if (buffer_es->environment[line1][column1].type == RF_EMPTY) {
-                  /*buffer_es->environment[line1][column1] = next_gen_fox;*/
                   insert_fox_in_environment = true;
                 } else if (buffer_es->environment[line1][column1].type ==
                            RF_FOX) {
                   if (buffer_es->environment[line1][column1].procreation_age <
                       next_gen_fox.procreation_age) { // gets the fox with the
                     // oldest procreation_age
-                    /*buffer_es->environment[line1][column1] = next_gen_fox;*/
                     insert_fox_in_environment = true;
                   } else if (buffer_es->environment[line1][column1]
                                  .procreation_age ==
@@ -288,17 +283,12 @@ void rf_update_ecosystem_foxes(rf_ecosystem_t *es, rf_ecosystem_t *buffer_es) {
                             .food_generations >
                         next_gen_fox.food_generations) { // solves with
                                                          // food_generations
-                      /*buffer_es->environment[line1][column1] = next_gen_fox;*/
                       insert_fox_in_environment = true;
                     }
                   }
                 }
-                /*es->environment[line][column] =
-                 * buffer_es->environment[line][column];*/
                 if ((next_gen_fox.procreation_age - 1) ==
                     buffer_es->GEN_PROC_RAPOSAS) {
-                  /*line1 = next_gen_fox.previous_line;*/
-                  /*column1 = next_gen_fox.previous_column;*/
                   buffer_es
                       ->environment[next_gen_fox.previous_line]
                                    [next_gen_fox.previous_column]
@@ -361,7 +351,7 @@ void rf_update_ecosystem_rabbits_from_buffer(rf_ecosystem_t *es,
 void rf_update_ecosystem_foxes_from_buffer(rf_ecosystem_t *es,
                                            rf_ecosystem_t *buffer_es) {
   int line, column;
-  rf_ecosystem_object_t buffer_es_obj_tmp,es_obj_tmp;
+  rf_ecosystem_object_t buffer_es_obj_tmp;
   for (line = 0; line < es->L; line++) {
     for (column = 0; column < es->C; column++) {
       if (es->environment[line][column].type == RF_FOX) {
@@ -373,7 +363,6 @@ void rf_update_ecosystem_foxes_from_buffer(rf_ecosystem_t *es,
   for (line = 0; line < es->L; line++) {
     for (column = 0; column < es->C; column++) {
       buffer_es_obj_tmp = buffer_es->environment[line][column];
-      es_obj_tmp = es->environment[line][column];
       if (buffer_es_obj_tmp.type == RF_FOX) {
         if (es->environment[line][column].type != RF_EMPTY) {
           es->N--;

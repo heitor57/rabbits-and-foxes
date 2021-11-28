@@ -24,19 +24,6 @@ int file_num_lines(FILE *f) {
   return lines;
 }
 
-/*const char object_type_strings[][20] = {"ROCHA","RAPOSA","COELHO","UNKNOWN"};*/
-/*const char* */
-/*rf_ecosystem_object_type_to_string(rf_ecosystem_object_type_t object_type) {*/
-  /*if (object_type == RF_ROCK) {*/
-    /*return object_type_strings[0];*/
-  /*} else if (object_type == RF_FOX) {*/
-    /*return object_type_strings[1];*/
-  /*} else if (object_type == RF_RABBIT) {*/
-    /*return object_type_strings[2];*/
-  /*} else {*/
-    /*return object_type_strings[3];*/
-  /*}*/
-/*}*/
 char *
 rf_ecosystem_object_type_to_string(rf_ecosystem_object_type_t object_type) {
   if (object_type == RF_ROCK) {
