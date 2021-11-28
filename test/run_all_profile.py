@@ -16,7 +16,7 @@ import utils
 if __name__ == "__main__":
     np.random.seed(utils.RAND_SEED)
 
-    result=os.popen("make release_time_debug").read()
+    os.popen("make release_time_debug").read()
     mlflow.set_experiment("dataset")
     experiment_id = mlflow.get_experiment_by_name("dataset").experiment_id
     runs_infos = mlflow.list_run_infos(
@@ -38,11 +38,13 @@ if __name__ == "__main__":
         artifact_path = client.download_artifacts(run.info.run_id, "dataset.txt")
         # print(artifact_path)
         # metric_values = pickle.load(open(artifact_path, "rb"))
-        mlflow.set_experiment("run")
+        mlflow.set_experiment("profile")
         with mlflow.start_run():
             for k, v in param.items():
                 mlflow.log_param(k, v)
-            result=os.popen("./serial-rabbits-and-foxes < "+artifact_path).read()
+            executable = "./serial-rabbits-and-foxes"
+            mlflow.log_param('executable',executable)
+            result=os.popen(f"{executable} < "+artifact_path).read()
             result_text = result
             # result = subprocess.run(
                 # ["./serial-rabbits-and-foxes", "<", artifact_path],
@@ -59,7 +61,8 @@ if __name__ == "__main__":
             # print()
             log_metric("computation_time", float(last_line))
             # if os.path.isfile('gmoun')
-            # mlflow.log_artifact('gmoun.txt')
+            os.popen(f"gprof {executable} gmon.out > gprof_result.txt").read()
+            mlflow.log_artifact('gprof_result.txt')
 
         # except Exception as e:
             # print(e)

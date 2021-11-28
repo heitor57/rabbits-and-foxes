@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.13)
 
 set(CMAKE_C_COMPILER "gcc")
 set(CMAKE_CXX_COMPILER "g++")
@@ -45,9 +45,9 @@ add_executable(serial-rabbits-and-foxes ${SRC_FILES})
   #PRIVATE
   #m
   #MPI::MPI_C)
-#target_compile_options(serial-rabbits-and-foxes PRIVATE -O3 -Wall)
-target_compile_options(serial-rabbits-and-foxes PRIVATE -pg -g -Wall -O3)
-target_link_options(serial-rabbits-and-foxes PRIVATE -pg -g -Wall -O3)
+target_compile_options(serial-rabbits-and-foxes PRIVATE -O3 -Wall)
+#target_compile_options(serial-rabbits-and-foxes PRIVATE -pg -g -Wall -O0)
+#target_link_options(serial-rabbits-and-foxes PRIVATE -pg -g -Wall)
 
 #target_compile_definitions(serialdf PUBLIC "$<$<CONFIG:DEBUG>:DEBUG>")
 
