@@ -1,4 +1,4 @@
-from mlflow.tracking.fluent import log_metric
+from mlflow.tracking.fluent import log_artifact, log_metric
 import numpy as np
 import subprocess
 from cycler import cycler
@@ -40,8 +40,11 @@ if __name__ == "__main__":
         with mlflow.start_run():
             for k, v in param.items():
                 mlflow.log_param(k, v)
+
+            f_result_name = 'tmp/result.txt'
             result=os.popen("./serial-rabbits-and-foxes < "+artifact_path).read()
             result_text = result
+            # print(result_text)
             # result = subprocess.run(
                 # ["./serial-rabbits-and-foxes", "<", artifact_path],
                 # stdout=subprocess.PIPE,
@@ -56,5 +59,11 @@ if __name__ == "__main__":
             last_line = last_line[len("Time spend with computation: ") : -1]
             # print()
             log_metric("computation_time", float(last_line))
+            
+            utils.create_path_to_file(f_result_name)
+            with open(f_result_name, mode="w") as f:
+                f.write(result_text)
+                f.flush()
+            mlflow.log_artifact(f_result_name)
         # except Exception as e:
             # print(e)

@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef LPARALLEL
+#include<omp.h>
+#endif
 #define DIRECTIONS_NUMBER 4
 #define next_cell(g, x, y, p) (((g) + (x) + (y)) % (p))
 
@@ -331,22 +334,38 @@ void rf_update_ecosystem_foxes(rf_ecosystem_t *es, rf_ecosystem_t *buffer_es) {
 void rf_update_ecosystem_rabbits_from_buffer(rf_ecosystem_t *es,
                                              rf_ecosystem_t *buffer_es) {
   int line, column;
+  int N=0;
+#ifdef LPARALLEL
+#pragma omp parallel
+{
+#pragma omp for reduction(+:N)
+#endif
   for (line = 0; line < es->L; line++) {
     for (column = 0; column < es->C; column++) {
       if (es->environment[line][column].type == RF_RABBIT) {
         es->environment[line][column].type = RF_EMPTY;
-        es->N--;
+        N--;
       }
     }
   }
+#ifdef LPARALLEL
+#pragma omp for reduction(+:N)
+#endif
   for (line = 0; line < es->L; line++) {
     for (column = 0; column < es->C; column++) {
       if (buffer_es->environment[line][column].type == RF_RABBIT) {
         es->environment[line][column] = buffer_es->environment[line][column];
-        es->N++;
+        /*es->N++;*/
+        N++;
       }
     }
   }
+
+#ifdef LPARALLEL
+}
+#endif
+
+  es->N += N;
 }
 void rf_update_ecosystem_foxes_from_buffer(rf_ecosystem_t *es,
                                            rf_ecosystem_t *buffer_es) {
