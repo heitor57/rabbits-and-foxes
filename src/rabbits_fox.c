@@ -378,30 +378,12 @@ void rf_update_ecosystem_foxes_from_buffer(rf_ecosystem_t *es,
       buffer_es_obj_tmp = buffer_es->environment[line][column];
       es_obj_tmp = es->environment[line][column];
       if (buffer_es_obj_tmp.type == RF_FOX) {
-        if(es->environment[line][column].type != RF_EMPTY){
+        if (es->environment[line][column].type != RF_EMPTY) {
           es->N--;
         }
         es->environment[line][column] = buffer_es->environment[line][column];
         es->N++;
       }
-      /*if (buffer_es_obj_tmp.type == RF_FOX &&*/
-      /*buffer_es_obj_tmp.food_generations < es->GEN_COMIDA_RAPOSAS) {*/
-      /*es->environment[line][column] = buffer_es->environment[line][column];*/
-      /*es->N++;*/
-      /*if ((buffer_es_obj_tmp.procreation_age - 1) ==*/
-      /*buffer_es->GEN_PROC_RAPOSAS) {*/
-      /*line1 = buffer_es_obj_tmp.previous_line;*/
-      /*column1 = buffer_es_obj_tmp.previous_column;*/
-      /*es->environment[line1][column1].type = RF_FOX;*/
-      /*es->environment[line1][column1].procreation_age = 0;*/
-      /*es->environment[line1][column1].food_generations = 0;*/
-      /*es->environment[line1][column1].previous_line = line1;*/
-      /*es->environment[line1][column1].previous_column = column1;*/
-      /*buffer_es_obj_tmp.procreation_age = 0;*/
-      /*es->N++;*/
-      /*}*/
-      /*es->environment[line][column] = buffer_es_obj_tmp;*/
-      /*}*/
     }
   }
 }
