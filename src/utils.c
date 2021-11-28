@@ -83,14 +83,11 @@ rf_ecosystem_t *initial_setup() {
   int i;
 
   int GEN_PROC_COELHOS, GEN_PROC_RAPOSAS, GEN_COMIDA_RAPOSAS, N_GEN, L, C, N;
-  fscanf(stdin, "%d%d%d%d%d%d%d\n", &GEN_PROC_COELHOS, &GEN_PROC_RAPOSAS,
+  fscanf(stdin, "%d %d %d %d %d %d %d\n", &GEN_PROC_COELHOS, &GEN_PROC_RAPOSAS,
          &GEN_COMIDA_RAPOSAS, &N_GEN, &L, &C, &N);
   rf_ecosystem_t *es = rf_new_ecosystem(GEN_PROC_COELHOS, GEN_PROC_RAPOSAS,
                                         GEN_COMIDA_RAPOSAS, N_GEN, L, C, N);
 
-  printf("INITIAL: %d %d %d %d %d %d %d\n", GEN_PROC_COELHOS,
-          GEN_PROC_RAPOSAS, GEN_COMIDA_RAPOSAS, N_GEN, L, C,
-          N);
   char string_buffer[255];
   int x, y;
   rf_ecosystem_object_type_t eco_type_obj;

@@ -47,11 +47,11 @@ if __name__ == "__main__":
                 # stdout=subprocess.PIPE,
             # )
             # result_text = result.stdout.decode("utf-8")
-            # print(result_text.splitlines()[0])
+            print(result_text.splitlines()[0])
             last_line = result_text.splitlines()[-1]
-            # print(last_line)
+            print(last_line)
 
-            print(result_text)
+            # print(result_text)
 
             last_line = last_line[len("Time spend with computation: ") : -1]
             # print()
