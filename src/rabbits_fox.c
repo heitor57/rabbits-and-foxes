@@ -573,8 +573,6 @@ rf_ecosystem_t *rf_update_ecosystem_generations(rf_ecosystem_t *es) {
 
   rf_free_ecosystem(buffer_es);
 #ifdef LPARALLEL
-printf("FINAL HELLOOO\n");
-  /*omp_lock_t **LOCK_MATRIX = malloc(sizeof(omp_lock_t *) * es->L);*/
   for (int i = 0; i < es->L; i++) {
     for (int j = 0; j < es->C; j++) {
        omp_destroy_lock(&LOCK_MATRIX[i][j]);
