@@ -10,11 +10,16 @@ from pathlib import Path
 import random
 import os
 import utils
-
+import argparse
 
 if __name__ == "__main__":
+    argparser= argparse.ArgumentParser()
+    argparser.add_argument('-e',type=str,default="./serial-rabbits-and-foxes")
+    args=argparser.parse_args()
+    executable = args.e
     np.random.seed(utils.RAND_SEED)
 
+    os.popen("make release_time_debug").read()
     mlflow.set_experiment("dataset")
     experiment_id = mlflow.get_experiment_by_name("dataset").experiment_id
     runs_infos = mlflow.list_run_infos(
@@ -43,7 +48,6 @@ if __name__ == "__main__":
 
             f_result_name = 'tmp/result.txt'
 
-            executable = "./serial-rabbits-and-foxes"
 
             f_resource_name=  'tmp/resource.txt'
             utils.create_path_to_file(f_resource_name)

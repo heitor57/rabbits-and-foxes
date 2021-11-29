@@ -16,8 +16,8 @@ cwd=$(VIM_ROOT)
 output=terminal
 errorformat=%f:%l:%m
 save=1
-[file-build-run-time-lparallel]
-command=make release_time_debug && ./lparallel-rabbits-and-foxes < ./data/in/test1.txt | tail -n3
+[file-build-run-time-parallel]
+command=make release_time_debug && ./parallel-rabbits-and-foxes < ./data/in/test1.txt | tail -n3
 cwd=$(VIM_ROOT)
 output=terminal
 errorformat=%f:%l:%m

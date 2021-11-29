@@ -6,7 +6,7 @@
 #include <string.h>
 #include <time.h>
 #include <sys/time.h>
-#ifdef LPARALLEL
+#ifdef PARALLEL
 #include <omp.h>
 #endif
 int main(void) {
@@ -18,7 +18,7 @@ int main(void) {
   rf_update_ecosystem_generations(es);
   /*clock_t end = clock();*/
   /*double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;*/
-  /*#ifdef LPARALLEL*/
+  /*#ifdef PARALLEL*/
   /*[>time_spent =/ <]*/
   /*#endif*/
   gettimeofday(&end, NULL);
