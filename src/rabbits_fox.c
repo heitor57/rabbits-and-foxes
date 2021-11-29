@@ -166,6 +166,10 @@ void rf_update_ecosystem_rabbits(rf_ecosystem_t *es,
   int directions_counter;
   int next_cell_value;
   directions_t direction_tmp;
+#ifdef LPARALLEL
+
+#pragma omp for
+#endif
   for (line = 0; line < es->L; line++) {
     for (column = 0; column < es->C; column++) {
       if (es->environment[line][column].type == RF_RABBIT) {
@@ -336,8 +340,6 @@ void rf_update_ecosystem_rabbits_from_buffer(rf_ecosystem_t *es,
   int line, column;
   int N=0;
 #ifdef LPARALLEL
-#pragma omp parallel
-{
 #pragma omp for reduction(+:N)
 #endif
   for (line = 0; line < es->L; line++) {
@@ -362,23 +364,28 @@ void rf_update_ecosystem_rabbits_from_buffer(rf_ecosystem_t *es,
   }
 
 #ifdef LPARALLEL
-}
+#pragma omp single
 #endif
-
   es->N += N;
 }
 void rf_update_ecosystem_foxes_from_buffer(rf_ecosystem_t *es,
                                            rf_ecosystem_t *buffer_es) {
-  int line, column;
+  int line, column, N=0;
   rf_ecosystem_object_t buffer_es_obj_tmp;
+#ifdef LPARALLEL
+#pragma omp for reduction(+:N)
+#endif
   for (line = 0; line < es->L; line++) {
     for (column = 0; column < es->C; column++) {
       if (es->environment[line][column].type == RF_FOX) {
         es->environment[line][column].type = RF_EMPTY;
-        es->N--;
+        N--;
       }
     }
   }
+#ifdef LPARALLEL
+#pragma omp for reduction(+:N)
+#endif
   for (line = 0; line < es->L; line++) {
     for (column = 0; column < es->C; column++) {
       buffer_es_obj_tmp = buffer_es->environment[line][column];
@@ -387,17 +394,30 @@ void rf_update_ecosystem_foxes_from_buffer(rf_ecosystem_t *es,
           es->N--;
         }
         es->environment[line][column] = buffer_es->environment[line][column];
-        es->N++;
+        N++;
       }
     }
   }
+#ifdef LPARALLEL
+#pragma omp single
+#endif
+  es->N += N;
 }
 void rf_update_ecosystem_generation(rf_ecosystem_t *es,
                                     rf_ecosystem_t *buffer_es) {
 
   rf_update_ecosystem_rabbits(es, buffer_es);
+#ifdef LPARALLEL
+#pragma omp barrier
+#endif
   rf_update_ecosystem_rabbits_from_buffer(es, buffer_es);
+#ifdef LPARALLEL
+#pragma omp barrier
+#endif
   rf_update_ecosystem_foxes(es, buffer_es);
+#ifdef LPARALLEL
+#pragma omp barrier
+#endif
   rf_update_ecosystem_foxes_from_buffer(es, buffer_es);
 }
 
@@ -406,25 +426,77 @@ rf_ecosystem_t *rf_update_ecosystem_generations(rf_ecosystem_t *es) {
   int i = 0;
   int generations_number = es->N_GEN;
 
+/*omp_lock_t *lock = (omp_lock_t *)malloc((es->L) (es->C)*sizeof(omp_lock_t))*/
+
+#ifdef LPARALLEL
+  omp_lock_t **lock_matrix = malloc(sizeof(omp_lock_t *) * es->L);
+  for (int i = 0; i < es->L; i++) {
+    lock_matrix[i] = malloc(sizeof(omp_lock_t) * es->C);
+    for (int j = 0; j < es->C; j++) {
+       omp_init_lock(&lock_matrix[i][j]);
+    }
+  }
+#endif
+
 #ifndef NDEBUG
   printf("============= [%d] Generation =============\n", i);
   rf_print_ecosystem_environment(es);
 #endif
 
+#ifdef LPARALLEL
+#pragma omp parallel
+{
+#endif
   for (i = 1; i <= generations_number; i++) {
+
+#ifdef LPARALLEL
+#pragma omp single
+    {
+#endif
     es->current_generation = i - 1;
     buffer_es->current_generation = i;
+#ifdef LPARALLEL
+    }
+#endif
+
+#ifdef LPARALLEL
+#pragma omp barrier
+#endif
 
     rf_clear_environment(buffer_es);
+#ifdef LPARALLEL
+#pragma omp barrier
+#endif
     rf_update_ecosystem_generation(es, buffer_es);
+
+#ifdef LPARALLEL
+#pragma omp barrier
+#endif
 
 #ifndef NDEBUG
     printf("============= [%d] Generation =============\n", i);
     rf_print_ecosystem_environment(es);
 #endif
+
+#ifdef LPARALLEL
+#pragma omp single
+#endif
     es->N_GEN--;
   }
+  
+#ifdef LPARALLEL
+}
+#endif
 
   rf_free_ecosystem(buffer_es);
+#ifdef LPARALLEL
+  omp_lock_t **lock_matrix = malloc(sizeof(omp_lock_t *) * es->L);
+  for (int i = 0; i < es->L; i++) {
+    lock_matrix[i] = malloc(sizeof(omp_lock_t) * es->C);
+    for (int j = 0; j < es->C; j++) {
+       omp_destroy_lock(&lock_matrix[i][j]);
+    }
+  }
   return es;
+#endif
 }
