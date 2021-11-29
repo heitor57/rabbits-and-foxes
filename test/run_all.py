@@ -15,8 +15,10 @@ import argparse
 if __name__ == "__main__":
     argparser= argparse.ArgumentParser()
     argparser.add_argument('-e',type=str,default="./serial-rabbits-and-foxes")
+    argparser.add_argument('-d',type=str,default="")
     args=argparser.parse_args()
     executable = args.e
+    env_variables = args.d
     np.random.seed(utils.RAND_SEED)
 
     os.popen("make release_time_debug").read()
@@ -53,7 +55,12 @@ if __name__ == "__main__":
             utils.create_path_to_file(f_resource_name)
 
             mlflow.log_param('executable',executable)
-            result_text=os.popen(f"/usr/bin/time -v {executable} < "+artifact_path+ f" 2> {f_resource_name}").read()
+            mlflow.log_param('env_variables',env_variables)
+            # if env_variables!="":
+            result_text=os.popen(f"{env_variables} /usr/bin/time -v {executable} < "+artifact_path+ f" 2> {f_resource_name}").read()
+            # else:
+                # result_text=os.popen(f"/usr/bin/time -v {executable} < "+artifact_path+ f" 2> {f_resource_name}").read()
+            print(result_text)
             
             # print(result_text)
             # result = subprocess.run(
