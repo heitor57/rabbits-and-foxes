@@ -45,7 +45,10 @@ add_executable(serial-rabbits-and-foxes ${SRC_FILES})
   #PRIVATE
   #m
   #MPI::MPI_C)
-target_compile_options(serial-rabbits-and-foxes PRIVATE -O3 -Wall)
+#target_compile_options(serial-rabbits-and-foxes PRIVATE -O3 -Wall)
+#target_compile_options(serial-rabbits-and-foxes PRIVATE -O3 -Wall)
+target_compile_options(serial-rabbits-and-foxes PRIVATE -pg -g -Wall -O0)
+target_link_options(serial-rabbits-and-foxes PRIVATE -pg -g -Wall)
 find_package(OpenMP)
 if (OPENMP_FOUND)
     add_executable(lparallel-rabbits-and-foxes ${SRC_FILES})

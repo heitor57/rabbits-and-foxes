@@ -42,28 +42,39 @@ if __name__ == "__main__":
                 mlflow.log_param(k, v)
 
             f_result_name = 'tmp/result.txt'
-            result=os.popen("./serial-rabbits-and-foxes < "+artifact_path).read()
-            result_text = result
+
+            executable = "./serial-rabbits-and-foxes"
+
+            f_resource_name=  'tmp/resource.txt'
+            utils.create_path_to_file(f_resource_name)
+
+            mlflow.log_param('executable',executable)
+            result_text=os.popen(f"/usr/bin/time -v {executable} < "+artifact_path+ f" 2> {f_resource_name}").read()
+            
             # print(result_text)
             # result = subprocess.run(
                 # ["./serial-rabbits-and-foxes", "<", artifact_path],
                 # stdout=subprocess.PIPE,
             # )
             # result_text = result.stdout.decode("utf-8")
-            print(result_text.splitlines()[0])
+            resource_usage= '\n'.join(result_text.splitlines()[-24:])
             last_line = result_text.splitlines()[-1]
-            print(last_line)
 
             # print(result_text)
+            computation_time_str =[last_line[len("Time spend with computation: ") : -1] for line in result_text.splitlines() if line.startswith('Time spend with computation: ')][0]
 
-            last_line = last_line[len("Time spend with computation: ") : -1]
             # print()
-            log_metric("computation_time", float(last_line))
+            log_metric("computation_time", float(computation_time_str))
             
             utils.create_path_to_file(f_result_name)
             with open(f_result_name, mode="w") as f:
                 f.write(result_text)
                 f.flush()
             mlflow.log_artifact(f_result_name)
+
+            # with open(f_resource_name, mode="w") as f:
+                # f.write(resource_usage)
+                # f.flush()
+            mlflow.log_artifact(f_resource_name)
         # except Exception as e:
             # print(e)
