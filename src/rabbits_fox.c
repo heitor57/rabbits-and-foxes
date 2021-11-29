@@ -531,49 +531,15 @@ rf_ecosystem_t *rf_update_ecosystem_generations(rf_ecosystem_t *es) {
   for (i = 1; i <= generations_number; i++) {
 
 #ifdef LPARALLEL
-
-printf("BEGIN BEFORE THREAD: %d \n",omp_get_thread_num());
-
-#pragma omp barrier
-
-printf("BEGIN AFTER THREAD: %d \n",omp_get_thread_num());
-#endif
-
-/*#ifdef LPARALLEL*/
-/*printf("P THREAD: %d \n",omp_get_thread_num());*/
-
-/*#pragma omp single*/
-    /*{*/
-    /*printf("MAIN FOR INITIAL HELLOOO\n");*/
-/*printf("M THREAD: %d \n",omp_get_thread_num());*/
-    /*}*/
-/*printf("AFTER THREAD: %d \n",omp_get_thread_num());*/
-/*#endif*/
-
-/*#ifdef LPARALLEL*/
-/*#pragma omp single*/
-/*printf("1.01 MAIN FOR INITIAL HELLOOO\n");*/
-/*#endif*/
-
-#ifdef LPARALLEL
     #pragma omp single
 #endif
     es->current_generation = i - 1;
-
-/*#ifdef LPARALLEL*/
-/*#pragma omp single*/
-/*printf("1.1 MAIN FOR INITIAL HELLOOO\n");*/
-/*#endif*/
 
 #ifdef LPARALLEL
     #pragma omp single
 #endif
     buffer_es->current_generation = i;
 
-/*#ifdef LPARALLEL*/
-/*#pragma omp single*/
-/*printf("2 MAIN FOR INITIAL HELLOOO\n");*/
-/*#endif*/
 
 #ifdef LPARALLEL
 #pragma omp barrier
@@ -587,42 +553,18 @@ printf("BEGIN AFTER THREAD: %d \n",omp_get_thread_num());
 
     rf_update_ecosystem_generation(es, buffer_es);
 
-/*#ifdef LPARALLEL*/
-/*#pragma omp barrier*/
-/*#endif*/
 
 #ifndef NDEBUG
     printf("============= [%d] Generation =============\n", i);
     rf_print_ecosystem_environment(es);
 #endif
 
-/*#ifdef LPARALLEL*/
-/*#pragma omp barrier*/
-/*#endif*/
-
 #ifdef LPARALLEL
 #pragma omp single
 #endif
     es->N_GEN--;
 
-/*#ifdef LPARALLEL*/
-/*#pragma omp barrier*/
-/*#endif*/
 
-#ifdef LPARALLEL
-
-printf("END BEFORE THREAD: %d     [%d]\n",omp_get_thread_num(), i);
-
-/*#pragma omp single*/
-/*printf("MAIN FOR HELLOOO\n");*/
-
-
-/*printf("END AFTER THREAD: %d \n",omp_get_thread_num());*/
-#endif
-
-/*#ifdef LPARALLEL*/
-/*#pragma omp barrier*/
-/*#endif*/
   }
   
 #ifdef LPARALLEL
