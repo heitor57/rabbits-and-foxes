@@ -1,5 +1,6 @@
-\documentclass{article}
+\documentclass[12pt]{article}
 
+\usepackage[left=3.5cm, right=3.5cm]{geometry}
 \usepackage{minted}
 \usepackage{listings}
 \usepackage{hyphenat}
@@ -52,128 +53,11 @@ habitado por duas espécies de animais, raposas e coelhos, cuja existência ao l
 
 Nesse trabalho será apresentado a proposta serial e a paralela para ambientes de memória compartilhada para solucionar o problema, que foram feitas usando C e a interface de programação paralela de memória compartilhada multiplataforma OpenMP. A simulação é feita seguindo as especificações definidas no documento de descrição do trabalho prático.
 
-%Nesse trabalho será abordado os dois algoritmos criados para resolver o problema, um de maneira sequêncial e outro de maneira paralela. 
-
 A próxima seção apresentará as estruturas de dados e toda implementação feita em C. Após isso será discutido a solução paralela proposta. Já na quarta seção será apresentado os resultados obtidos, junto com discussões dos resultados, impacto da variação dos parâmetros e da carga, uso de recursos computacionais, perfil de desempenho sequencial, discussão da identificação das oportunidades de paralelização e avaliação dos ganhos da paralelização. Por fim é feito uma conclusão do trabalho com discussões sobre os resultados e trabalhos futuros que podem ser explorados.
-
-%desses processos celulares vezes precisam e utilizam modelos de sistemas biológicos para diversos propositosé uma tarefa significativa da biologia de sistemas e da biologia matemática.
-
-%Um número primo é um número natural maior que 1 que não é produto de dois
-%números naturais menores. Números naturais maiores que 1 que não são primos são
-%chamados de número composto. A identificação de um número primo também tem
-%relação com a função divisora do mesmo, já que os números primos tem exatamente
-%2 divisores exatos, então com o número de divisores exatos de um número é
-%possível identificar a primalidade de um número (tarefa um pouco mais complexa
-%que o teste de primalidade). Em matemática, e especificamente na teoria dos
-%números, uma função divisora é uma função aritmética relacionada aos divisores
-%de um inteiro. Quando referida como função divisora, ela conta o número de
-%divisores de um inteiro (incluindo 1 e o próprio número). Diversas propriedades
-%matemáticas podem ser observadas atráves da observação da função divisora ao
-%longo de diferentes amostragens, que pode potencialmente auxiliar matemáticos
-%nas suas áreas de pesquisas, e talvez até mesmo no caso de um algoritmo
-%suficientemente eficiente pode ajudar a eliminar ou "reforçar" ainda mais
-%colorarios existentes na área.
-
-%Nesse trabalho será feito a implementação paralela mestre-escravo usando MPI de um algoritmo que identifica números primos em um vetor de N inteiros. Primeiro será mostrado mais detalhes sobre o problema. Além disso será mostrado as soluções como uma visão geral e após isso será apresentado uma documentação do código, as argumentações sobre as decisões das soluções, resultados e análises serão descritos na pénultima seção.
-
-%\subsection{Especificação do Problema}
-%O programa deverá ler o arquivo de entrada deverá e carregado para memoria no
-%processo mestre. Após o processamento, cada processo escravo deverá retornar
-%para
-%o processo mestre quantos divisores exatos possui cada valor armazenado na
-%sua fatia do vetor. depois que o último escravo terminar, o processo mestre
-%deverá colocar o número de divisores de cada elemento do arquivo de entrada
-%em um arquivo de saída (saída.txt) na ordem em que os valores originais
-%estavam no arquivo de entrada. A tomada de tempo das execuções será
-%feita somente no processo mestre após leitura do arquivo de entrada e antes
-%da escrita do arquivo de saída, ou seja,
-%não será considerado o tempo de
-%entrada/saída.
-
-%A paralelização da aplicação será dividida em 4 partes, as quais terão um relatório técnico. São elas:
-%\begin{enumerate}
-%\item perfil de desempenho sequencial (usando prof)
-%\item identificação das oportunidades de paralelização
-%\item paralelização
-%\item avaliação dos ganhos da paralelização
-%\end{enumerate}
-
-%\subsection{Problema}
-
-%Como mostrado na subseção anterior o
-%problema é simples e consiste em determinar o número de divisores exatos dos elementos $a_i$ de um vetor $A$ de tamanho $N$.
-
-%\section{Solução}
-
-%Para solucionar esse problema procura-se inicialmente uma função/algoritmo $d(a_i)$ que consiga determinar o número de divisores de um elemento $a_i$.
-
-%Esse problema pode ser solucionado facilmente eficientemente com um algoritmo de fatoração de primos atráves da utilização da relação mostrada na Equação \ref{eq:divisorfunction}, que atráves da quantidade de vezes $e_i$ que um número primo aparece em uma fatoração de primos o número de divisores pode ser calculado. Isso é bem simples de entender, já que a fatoração de primos de um divisor $d'$ de $a$ tem que ser um subconjunto da fatoração de primos de $a$, então para o calculo do número de divisores basta calcular todos diferentes subconjuntos da fatoração de primos de um número $a$, o número de diferentes subconjuntos então são calculados usando a Equação \ref{eq:divisorfunction}.
-
-%\begin{equation}\label{eq:divisorfunction}
-%d(a)=\prod_{i=1}^{k} (e_i+1)
-%\end{equation}
-
-%Agora para a fatoração de primos existem diversos métodos extremamente rebuscados, aqui será utilizado uma abordagem simples, porém de maneira otimizada. Para a fatoração e contagem de divisores será aplicado o algoritmo \ref{alg:divisorfunc} no qual uma lista de primos é percorrida (linha \ref{alg:divisorfunc:for}) e divisões são feitas caso o número seja um divisor e o contador de divisores e atualizado logo após as divisões (linha \ref{alg:divisorfunc:changes}). Para otimizar o método um limite de busca é estabelecido na linha \ref{alg:divisorfunc:end}, já que no caso de a condição ser atendida o número atual é um primo ou é o número 1, denotando que a fatoração pode ser finalizada. Note que nesta proposta não é guardado os fatores, já que não é isso que buscamos, mas sim o número de divisores do número.
-
-%\begin{algorithm}
-%\caption{Função divisora\label{alg:divisorfunc}}
-%\begin{algorithmic}[1]
-%\Procedure{d}{$a,primes$}
-%\State $num\_divisors\gets 1$
-%\For{$i \gets 0$ to $|primes|-1$}\label{alg:divisorfunc:for}
-%\State $count \gets 0$
-%\If{$number \bm{\bmod} prime = 0$}\label{alg:divisorfunc:changes}
-%\While{$number \bm{\bmod} prime = 0$}
-%\State $number \gets number/prime$
-%\State $count \gets count + 1$
-%\EndWhile
-%\State $num\_divisors \gets num\_divisors *(count+1)$
-%\EndIf
-%\If{$prime > \sqrt{number}$}\label{alg:divisorfunc:end}
-%\If{$number \neq 1$}
-%\State $num\_divisors \gets num\_divisors * 2$
-%\EndIf
-%\State \textbf{break}
-%\EndIf
-%\EndFor
-%\Return $num\_divisors$
-%\EndProcedure
-%\end{algorithmic}
-%\end{algorithm}
-
-%Além disso ainda falta o gerador de primos que alimenta o algoritmo \ref{alg:divisorfunc} com uma lista de primos. Para gerar os primos até um limite $n$ foi implementado o crivo de eratóstenes com algumas otimizações para melhorar a performance do algoritmo. O crivo tradicional pode ser visto no algoritmo \ref{alg:erasto}. Na implementação duas otimizações, a primeira delas consiste de começar a marcação a partir do quadrado do primo encontrado e a segunda é a representação somente dos números impares do vetor, assim diminuindo o número de computações em dois e liberando mais memória (aumentando também a chance de cache hit).
-
-
-%\begin{algorithm}
-%\caption{Crivo de Eratóstenes\label{alg:erasto}}
-%\begin{algorithmic}[1]
-%\Procedure{crivo}{$n$}
-%\State $A[n+1]$ \Comment{Vetor de tamanho n}
-%\State Atribua a todos elementos de $A$ o valor $true$
-%\State $A[0]\gets 0; A[1]\gets 0$
-%\For{$i \gets 2$ to $\sqrt{n}$}
-%\If{$A[i] = true$}
-%\State Atribua a todos múltiplos de $i$ até $n$ $false$
-%\EndIf
-%\EndFor
-%\State primes \gets Transforme A em um vetor dos primos encontrados
-%\Return primes
-%\EndProcedure
-%\end{algorithmic}
-%\end{algorithm}
-
-%O diagrama da figura \ref{fig:execoverviewserial} mostra uma visão geral de como cada componente desse se combina para resolver o problema final.
-
-%\begin{figure}[htp]
-%\centering
-%\includegraphics[width=4cm]{./overview_parallel_df}
-%\caption{Visão geral da execução.}
-%\label{fig:execoverviewserial}
-%\end{figure}
 
 \section{Implementação}
 
-Nesa seção será introduzido os módulos com suas respectivas funções, no caso desse problema não foi necessário a construção de nenhuma estrutura de dados. Os tipos primitivos foram suficientes para realizar toda implementação da solução.
+Nesa seção será introduzido os módulos com suas respectivas estruturas de dados e funções.
 
 \subsection{Módulo de erros (errors)}
 
@@ -280,6 +164,7 @@ Já essa estrutura define o ecossistema que contém os parâmetros para simulaç
 omp_lock_t **LOCK_MATRIX;
 int COUNTER;
       \end{minted}
+
 O LOCK\_MATRIX é uma matriz de lock que indica uma região do ambiente que está sendo acessado ou escrito, é utilizado na implementação paralela e deixa o código mais legível, e sem modificações que são somente necessárias para a solução paralela, sendo uma variável global.
 O COUNTER é um contador utilizado em algumas funções, está sendo usado como uma variável global, pois deixa o código mais legível com a implementação paralela e sem modificações só necessárias para a solução paralela.
 
@@ -290,6 +175,7 @@ O COUNTER é um contador utilizado em algumas funções, está sendo usado como 
 typedef enum { NORTH, EAST, SOUTH, WEST } directions_t;
 const directions_t directions_order[] = {NORTH, EAST, SOUTH, WEST};
       \end{minted}
+
 O DIRECTIONS\_NUMBER é o número de direções, isto é, norte, leste, sul, oeste.
 
 O directions\_t define o tipo de direções que também são as direções que as raposas e coelhos podem se mover, isto é: norte; leste; sul; e oeste.
@@ -469,7 +355,7 @@ Essa paralelização foi feita usando uma matriz de lock, no qual cada linha e c
 
 Essa solução pode ser otimizada para casos específicos de escalonamento, porém para explorar todos escalonadores do OpenMP e gerar uma análise mais interessante foi feito essa abordagem genérica para qualquer escalonador e sem nenhuma pressuposição sobre a carga de trabalho, onde os Workers sempre fazem o lock quando acessam, que em casos específicos de escalonamento, como no escalonamento estático de blocos contíguos pode ser otimizado e o lock pode ser feito somente nas ''bordas''.
 
-Essa paralelização foi pensada pela maneira quase que completamente paralela da simulação, que só não é completa devido à dependência a células adjacentes.
+Essa paralelização foi pensada pela sua natureza paralela, que no entando tem seus problemas devido à dependência a células adjacentes de outros Workers.
 
 No caso, com a utilização do OpenMP para paralelização foi modificado as seguintes funções:
 
@@ -576,9 +462,9 @@ Para avaliação do desempenho sequencial foi avaliado uma entrada com os parâm
 Muitos dos parâmetros já foram especificados na especificação do trabalho e também já foi mencionado aqui neste trabalho. As probabilidades de geração são variáveis do gerador aleatório de bases de dados utilizado para fazer experimentos em bases de dados maiores utilizado ao longo de todo esse trabalho.
 
 
-Abaixo está o resultada do perfil de desempenho sequencial do programa. É possível observar que as funções que fazem a atualização do buffer são as que mais gastam tempo, nas mesmas o for existente nas mesmas não tem nenhum tipo de interdependência, sendo um grande potencial de paralelização. As funções de atualização do ecossistema com base nas regras da especificação também gastam bastante tempo e podem ser paralelizadas, porém, terá um certo maleficio devido aos tratamentos de condições de corrida. Além disso, a função de limpar o ambiente pode ser facilmente paralelizada, sendo ela também uma oportunidade de paralelização embaraçosa como as funções de atualização usando o buffer. É possível observar que o potencial de paralelização representa aproximadamente 90\% do tempo de execução. Não é esperado um speed up linear nesse caso, visto a solução genérica e os locks.
+Abaixo está o resultada do perfil de desempenho sequencial do programa. É possível observar que as funções que fazem a atualização do buffer são as que mais gastam tempo, nas mesmas o for existente não gera nenhum conflito entre os Workers, sendo um grande potencial de paralelização. As funções de atualização do ecossistema com base nas regras da especificação também gastam bastante tempo e podem ser paralelizadas, porém, terá um certo malefício devido aos tratamentos de condições de corrida. Além disso, a função de limpar o ambiente pode ser facilmente paralelizada, sendo ela também uma oportunidade de paralelização embaraçosa como as funções de atualização usando o buffer. É possível observar que o potencial de paralelização representa aproximadamente 90\% do tempo de execução. Não é esperado um speed up linear nesse caso, visto a solução genérica e os locks.
 
-A lei de Amdahl da o seguinte speed up para 12 threads $\frac{1}{1-0.9+\frac{0.9}{12}} = 5.7$, que é um limite superior para o speed up, já que há necessidade de tratamento de condição de corrida vai reduzir um pouco o speed up, porém é importante notar que a fração de tempo aqui (no perfil sequencial) também conta o tempo da impressão que é um erro e além disso a fração do programa que pode ser paralelizada foi feita com base em uma estimativa. Então é esperado que com 12 threads não se tenha um speed up próximo de 5.7.
+A lei de Amdahl da o seguinte speed up para 12 threads $\frac{1}{1-0.9+\frac{0.9}{12}} = 5.7$, que é um limite superior para o speed up, já que há necessidade de tratamento de condição de corrida vai reduzir um pouco o speed up, porém é importante notar que a fração de tempo aqui (no perfil sequencial) também conta o tempo da impressão que é um erro e além disso a fração do programa que pode ser paralelizada foi feita com base em uma estimativa. Então é esperado que com 12 threads não se tenha um speed up próximo de 5.7, mas sim abaixo disso.
 
 	{
 		\scriptsize
@@ -610,7 +496,7 @@ Each sample counts as 0.01 seconds.
 
 Agora será analisado o impacto da variação dos parâmetros e da carga no tempo de execução do programa usando o algoritmo serial.
 
-Para ser feito essa análise foi definido um conjunto de parâmetros para ser feito uma execução em grade (i.e., todas combinações dos conjuntos de parâmetros) para entender melhor como cada parâmetro impacta no tempo de computação do algoritmo. O conjunto de parâmetros utilizados para ser feito a busca em grade está descrito na tabela
+Para ser feito essa análise foi definido um conjunto de parâmetros para ser feito uma execução em grade (i.e., todas combinações dos conjuntos de parâmetros) para entender melhor como cada parâmetro impacta no tempo de computação do algoritmo. O conjunto de parâmetros utilizados para ser feito a busca em grade está descrito na tabela \ref{tab:gradeparam}.
 
 \begin{table}[H]
 	\begin{center}
@@ -632,6 +518,7 @@ Para ser feito essa análise foi definido um conjunto de parâmetros para ser fe
 		\end{tabular}
 	\end{center}
 	\caption{Conjunto de parâmetros e carga para a execução em grade.}
+	\label{tab:gradeparam}
 \end{table}
 
 A visualização do tempo de execução foi feita usando coordenadas paralelas que é uma maneira comum de visualizar e analisar conjuntos de dados de alta dimensão.
@@ -664,9 +551,7 @@ GEN\_COMIDA\_RAPOSAS não tem muito impacto no tempo de execução final. Já a 
 
 \subsubsection{Recursos computacionais}
 
-Agora serão apresentados os recursos computacionais por parte da aplicação.
-
-Esses recursos computacionais foram avaliados usando a base de dados apresentada na tabela \ref{tab:parametros_base_de_dados_perfil_sequencial} usando o comando ''/usr/bin/time -v'', a seguir é apresentado o resultado abaixo. É possível notar que uma parte consideravel do tempo de execução é tempo do sistema, que pode ser um fator negativo para um speed up alto.
+Agora serão apresentados os recursos computacionais por parte da aplicação. Esses recursos computacionais foram avaliados usando a base de dados apresentada na tabela \ref{tab:parametros_base_de_dados_perfil_sequencial} usando o comando ''/usr/bin/time -v''. O resultado está apresentado abaixo. É possível notar que uma parte consideravel do tempo de execução é tempo do sistema, que pode ser um fator negativo para um speed up alto.
 
 
 	{
@@ -746,20 +631,16 @@ Apesar da versão paralela não ter tido um grande melhora no tempo de execuçã
 
 \section{Conclusão}
 
-Com este trabalho foi possível ter uma melhor ideia sobre como utilizar o OpenMP na prática e os benéficios do uso. O desenvolvimento do programa paralelo para ambiente de memória compartilhada foi um pouco diferente do trabalho anterior, já que neste o uso do OpenMP que tem uma forma bastante diferente de ser utilizado trouxe outras prespectivas de como paralelizar o código. Além disso o OpenMP se demonstrou um excelente meio para desenvolvimento de programas paralelos devido a sua facilidade de uso e eficiência.
+Com este trabalho foi possível ter uma melhor ideia sobre como utilizar o OpenMP na prática e os benéficios do uso. O desenvolvimento do programa paralelo para ambiente de memória compartilhada foi um pouco diferente do trabalho anterior, já que o OpenMP tem uma forma bastante diferente de ser utilizado e trouxe outras prespectivas de como paralelizar o código. Além disso o OpenMP se demonstrou um excelente meio para desenvolvimento de programas paralelos devido a sua facilidade de uso e eficiência.
 
 
 Os resultados obtidos demonstraram que houve um ganho no uso da computação paralela para resolver o problema, porém esse ganho foi pequeno. O speed up atingido foi bem abaixo do esperado, porém algumas alternativas foram propostas que podem ser abordadas em trabalhos futuros e podem ter resultados melhores.
 
 Por fim, o programa atingiu pelo menos o objetivo de melhorar a solução serial, que é o objetivo mais importante do trabalho.
 
-Em futuros trabalhos poderia ser abordado a paralelização baseada em objetos do mundo, ao invés de ser de acordo com a matriz do ambiente. Além disso poderia ser explorado uma abordagem de balanceamento estatico de carga para reduzir o uso de locks.
+Em futuros trabalhos poderia ser abordado a paralelização baseada em objetos do mundo, ao invés de ser de acordo com a matriz do ambiente. Além disso poderia ser explorado uma abordagem de balanceamento estático de carga para reduzir o uso de locks.
 
 
-
-%há mais ganho na paralelização da tarefa da execução da função divisora, pelo menos para o intervalo de números inteiros trabalhados. Em trabalhos futuros dóminios mais complicados com maior intervalo de valores podem ser explorados para propor novas soluções paralelas, até mesmo para o crivo de Eratóstenes. Interessante notar que no caso não há necessidade e pelo overhead de comunicação existe uma grande possibilidade de no caso com as entradas atuais só piorasse os resultados. Além disso, análises mais granulares podem ser feitas sobre os  resultados das execuções paralelas para propor melhoras.
-
-%Também foi possível observar que a parelelização foi feita com sucesso, escalando bem e tendo ganhos significativos.
 
 %\bibliographystyle{plainnat}
 %\bibliography{doc.bib}
