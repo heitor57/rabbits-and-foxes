@@ -23,8 +23,6 @@
 	│   ├── utils.c # utilities (e.g.,I/O)
 	│   └── utils.h # utilities
 	└── test # (extra package)
-			├── dataset_generator.py # divisor function using a Python library to check results and validity of the program
-			├── random_numbers.py # random generator of inputs to the program
 			├── dataset_generator.py # generate datasets
 			├── run_all_profile.py # run profile experiments
 			├── run_all.py # run normal time experiments
