@@ -26,7 +26,7 @@ if __name__ == "__main__":
     experiment_id = mlflow.get_experiment_by_name("dataset").experiment_id
     runs_infos = mlflow.list_run_infos(
         experiment_id,
-        order_by=["attribute.end_time DESC"],
+        order_by=["attribute.end_time DESC"]
     )
     for param in utils.parameters:
         print(param)
@@ -34,6 +34,8 @@ if __name__ == "__main__":
             # mlflow.set_experiment('dataset')
             # print(param)
             # print({k: str(v) for k, v in param.items()})
+
+        mlflow.set_experiment("dataset")
         run = utils.already_ran(
             {str(k): str(v) for k, v in param.items()},
             experiment_id,

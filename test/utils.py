@@ -32,18 +32,23 @@ parameters = (
     # cycler(L=2 ** (np.arange(3, dtype=int) + 7))
     # * cycler(C=2 ** (np.arange(3, dtype=int) + 7))
     # * cycler(N=2 ** (np.arange(3, dtype=int) + 6))
-    # cycler(L=[1000,5000, 10000])
-    # * cycler(C=[1000,5000, 10000])
-    # * cycler(N=[100,1000,10000])
-    cycler(L=[10000])
-    * cycler(C=[10000])
-    * cycler(N=[100000])
-    # cycler(L=2 ** (np.arange(1, dtype=int) + 7))
-    # * cycler(C=2 ** (np.arange(1, dtype=int) +7))
-    # * cycler(N=2 ** (np.arange(1, dtype=int) + 9))
+    # cycler(L=[100,250,500])
+    # * cycler(C=[100,250,500])
+    # * cycler(N=[250,500,1000])
+    # * cycler(GEN_PROC_COELHOS=[2,4])
+    # * cycler(GEN_PROC_RAPOSAS=[4,6])
+    # * cycler(GEN_COMIDA_RAPOSAS=[3,5])
     # * cycler(GEN_PROC_COELHOS=[2])
     # * cycler(GEN_PROC_RAPOSAS=[4])
     # * cycler(GEN_COMIDA_RAPOSAS=[3])
+    # * cycler(N_GEN=[10,20])
+    # cycler(L=2 ** (np.arange(1, dtype=int) + 7))
+    # * cycler(C=2 ** (np.arange(1, dtype=int) +7))
+    # * cycler(N=2 ** (np.arange(1, dtype=int) + 9))
+    cycler(L=[10000])
+    * cycler(C=[10000])
+    # * cycler(N=[100])
+    * cycler(N=[100000])
     * cycler(GEN_PROC_COELHOS=[2])
     * cycler(GEN_PROC_RAPOSAS=[4])
     * cycler(GEN_COMIDA_RAPOSAS=[3])
@@ -81,6 +86,7 @@ def already_ran(parameters, experiment_id, runs_infos):
     parameters, and experiment id already ran. The run must have completed
     successfully and have at least the parameters provided.
     """
+    # parameters={str(k):str(v) for k,v in parameters.items()}
 
     def _get_params(run):
         """Converts [mlflow.entities.Param] to a dictionary of {k: v}."""
@@ -88,13 +94,12 @@ def already_ran(parameters, experiment_id, runs_infos):
     # print('Exp',experiment_id)
     all_run_infos = runs_infos
     for run_info in all_run_infos:
-        # print(run_info)
+        # print(run_info,parameters)
 
         full_run = mlflow.get_run(run_info.run_uuid)
         run_params = _get_params(full_run)
         match_failed = False
-        # print(parameters)
-        # print(run_params)
+        # print(parameters,"---",run_params)
         for param_key, param_value in parameters.items():
             run_value = run_params.get(param_key)
             if run_value != param_value:
