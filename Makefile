@@ -8,9 +8,3 @@ release_time_debug:
 	mkdir -p build &&	cd build &&	cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-DTIME_DEBUG" .. &&	cmake --build .
 debug:
 	mkdir -p build &&	cd build &&	cmake -DCMAKE_BUILD_TYPE=Debug .. &&	cmake --build .
-standard:
-	mkdir -p build &&	cd build &&	cmake .. &&	cmake --build .
-genbases:
-	./test/generate_bases
-run_bases:
-	./test/run_bases
