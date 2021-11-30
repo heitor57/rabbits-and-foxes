@@ -6,24 +6,11 @@
 #include <string.h>
 
 /**
- * @brief number of lines of a file
+ * @brief Transforma um tipo de objeto do ecosistema em uma string.
  *
- * @param f
- * @return int
+ * @param object_type Tipo de objeto a ser "transformado" em uma string.
+ * @return string que representa um tipo de objeto.
  */
-int file_num_lines(FILE *f) {
-  char c;
-  int lines = 0;
-  while (!feof(f)) {
-    c = fgetc(f);
-    if (c == '\n') {
-      lines++;
-    }
-  }
-  fseek(f, 0, SEEK_SET);
-  return lines;
-}
-
 char *
 rf_ecosystem_object_type_to_string(rf_ecosystem_object_type_t object_type) {
   if (object_type == RF_ROCK) {
@@ -37,6 +24,12 @@ rf_ecosystem_object_type_to_string(rf_ecosystem_object_type_t object_type) {
   }
 }
 
+/**
+ * @brief Transforma um tipo de objeto do ecosistema em uma string.
+ *
+ * @param string_buffer string que representa um tipo de objeto.
+ * @return um tipo de objeto rf_ecosystem_object_type_t correspondente a string_buffer.
+ */
 rf_ecosystem_object_type_t
 string_to_rf_ecosystem_object_type(char *string_buffer) {
   if (!strcmp(string_buffer, "ROCHA")) {
@@ -50,6 +43,11 @@ string_to_rf_ecosystem_object_type(char *string_buffer) {
   }
 }
 
+/**
+ * @brief Imprime o ecosistema na saída padrão no formato esperado definido na especificação.
+ *
+ * @param es Ecosistema para ser imprimido.
+ */
 void print_ecosystem_full_report(rf_ecosystem_t *es) {
 
   fprintf(stdout, "%d %d %d %d %d %d %d\n", es->GEN_PROC_COELHOS,
@@ -71,13 +69,8 @@ void print_ecosystem_full_report(rf_ecosystem_t *es) {
 }
 
 /**
- * @brief Initial setup of the programs, it manages I/O (parameters and input
- * files)
- *
- * @param argc
- * @param **argv
- * @param num_integers number of integers (to be updated) of the file
- * @return integers read from the input file
+ * @brief Configuração inicial dos programas, no qual é feito uma leitura da entrada padrão e criado o ecosistema inicial.
+ * @return Ecossistema carregado da entrada padrão.
  */
 rf_ecosystem_t *initial_setup() {
   int i;

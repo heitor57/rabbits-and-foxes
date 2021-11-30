@@ -4,10 +4,8 @@
 
 typedef enum
 {
-    E_SUCCESS,
-    E_INVALID_INPUT,
-    E_FILE_NOT_FOUND,
-    E_OUT_OF_BOUNDS,
+    E_SUCCESS, // Sucesso
+    E_OUT_OF_BOUNDS // Acesso a algo fora do espaço de memória reservado
 }error_t;
 
 #endif
