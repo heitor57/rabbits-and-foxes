@@ -12,6 +12,7 @@
 	.
 	├── README.md
 	├── Makefile # Makefile that compiles the program using CMake
+	├── CMakeLists.txt # CMake config
 	├── serial-rabbits-and-foxes # Serial version of the simulator program
 	├── parallel-rabbits-and-foxes # Parallel version of the simulator using OpenMP
 	├── src
